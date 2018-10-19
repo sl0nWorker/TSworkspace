@@ -1,5 +1,6 @@
 package com.inc.slon.controller;
 
+import com.inc.slon.model.Truck;
 import com.inc.slon.service.TruckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,10 @@ public class MainController {
 
     @RequestMapping("/home")
     public String showIndexPage(ModelMap map) {
+        Truck truck = new Truck();
+        truck.setGoodCondition(true);
+        truck.setName("first");
+        truckService.add(truck);
         map.addAttribute("trucksList", truckService.listTrucks());
         return INDEX_PAGE;
     }
