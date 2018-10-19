@@ -16,10 +16,10 @@ public class MainController {
     @RequestMapping("/home")
     public String showIndexPage(ModelMap map) {
         Truck truck = new Truck();
-        truck.setGoodCondition(true);
-        truck.setName("first");
+        truck.setWorking(true);
+        truck.setRegNumber("first");
         truckService.add(truck);
         map.addAttribute("trucksList", truckService.listTrucks());
-        return INDEX_PAGE;
+        return INDEX_PAGE;s
     }
 }
