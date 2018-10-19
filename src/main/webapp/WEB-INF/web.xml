@@ -1,0 +1,45 @@
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+        http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+    <display-name>webAppTruck</display-name>
+    <!-- ===================================================== -->
+    <!--  1. Create root context with spring listener          -->
+    <!--     Remove this means only use servlet contxt         -->
+    <!-- ===================================================== -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!-- ===================================================== -->
+    <!-- Can modify default root context config file           -->
+    <!-- ===================================================== -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/applicationContext.xml</param-value>
+    </context-param>
+    <!-- ===================================================== -->
+    <!--  2. Define servlet with private context               -->
+    <!-- ===================================================== -->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!-- ================================================= -->
+        <!-- Set contextConfigLocation to empty                -->
+        <!-- means only use root context                       -->
+        <!-- ================================================= -->
+        <!-- -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>WEB-INF/dispatcher-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <!-- ===================================================== -->
+    <!-- One servlet, the dispatcher, to rule it all           -->
+    <!-- ===================================================== -->
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+</web-app>
