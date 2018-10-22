@@ -8,27 +8,27 @@ public class Truck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
-    private int id;
+    private Long id;
 
     @Column(name = "REGNUMBER")
     private String regNumber;
 
-    @Column(name = "WORKSHIFT")
+    @Column(name = "WORK_SHIFT")
     private int workShift;
 
-    @Column(name = "LOADCAPACITY")
-    private int loadCapacity;
+    @Column(name = "LOAD_WEIGHT")
+    private int loadWeight;
 
     @Column(name = "WORKING")
-    private boolean working;
+    private Boolean working;
 
     @OneToOne
-    @JoinColumn(name = "CURRENTCITY")
+    @JoinColumn(name = "CITY_ID")
     private City city;
 
-    public int getId() { return id; }
-
-    public void setId(int id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
     public String getRegNumber() {
         return regNumber;
@@ -38,23 +38,36 @@ public class Truck {
         this.regNumber = regNumber;
     }
 
-    public int getWorkShift() { return workShift; }
+    public int getWorkShift() {
+        return workShift;
+    }
 
-    public void setWorkShift(int workShift) { this.workShift = workShift; }
+    public void setWorkShift(int workShift) {
 
-    public int getLoadCapacity() { return loadCapacity; }
+        this.workShift = workShift;
+    }
 
-    public void setLoadCapacity(int loadCapacity) { this.loadCapacity = loadCapacity; }
+    public int getLoadWeight() {
+        return loadWeight;
+    }
 
-    public boolean getWorking() {
+    public void setLoadWeight(int loadWeight) {
+        this.loadWeight = loadWeight;
+    }
+
+    public Boolean getWorking() {
         return working;
     }
 
-    public void setWorking(boolean working) {
+    public void setWorking(Boolean working) {
         this.working = working;
     }
 
-    public City getCity() { return city; }
+    public City getCity() {
+        return city;
+    }
 
-    public void setCity(City city) { this.city = city; }
+    public void setCity(City city) {
+        this.city = city;
+    }
 }

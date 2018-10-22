@@ -20,6 +20,6 @@ public class MainController {
         truck.setRegNumber("first");
         truckService.add(truck);
         map.addAttribute("trucksList", truckService.listTrucks());
-        return INDEX_PAGE;s
+        return INDEX_PAGE;
     }
 }
