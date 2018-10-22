@@ -6,6 +6,8 @@
     <persistence-unit name="LOCAL_PERSISTENCE" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>com.inc.slon.model.Truck</class>
+        <class>com.inc.slon.model.CountryMap</class>
+        <class>com.inc.slon.model.City</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/db_trucks"/>

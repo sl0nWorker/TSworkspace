@@ -7,5 +7,5 @@ import java.util.List;
 public interface TruckDao {
     void add(Truck truck);
 
-    List<Truck> listTrucks();
+    List<Truck> truckList();
 }

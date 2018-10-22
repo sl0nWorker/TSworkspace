@@ -1,7 +1,7 @@
 package com.inc.slon.dao.impl;
 
-import com.inc.slon.dao.TruckDao;
-import com.inc.slon.model.Truck;
+import com.inc.slon.dao.CityDao;
+import com.inc.slon.model.City;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -11,20 +11,20 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
-public class TruckDaoImpl implements TruckDao {
+public class CityDaoImpl implements CityDao {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public void add(Truck truck) {
-        entityManager.persist(truck);
+    public void add(City city) {
+        entityManager.persist(city);
     }
 
     @Override
-    public List<Truck> truckList() {
-        CriteriaQuery<Truck> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(Truck.class);
+    public List<City> cityList() {
+        CriteriaQuery<City> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(City.class);
         @SuppressWarnings("unused")
-        Root<Truck> root = criteriaQuery.from(Truck.class);
+        Root<City> root = criteriaQuery.from(City.class);
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

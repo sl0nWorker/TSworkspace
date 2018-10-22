@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TruckService {
     void add (Truck truck);
-    List<Truck> listTrucks();
+    List<Truck> truckList();
 }
