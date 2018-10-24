@@ -1,12 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+<jsp:include page="../templates/header.jsp"/>
 <body>
-<h2>Hello1 World!</h2>
-<h1>
-    <c:forEach items="${trucksList}" var="truck">
-        <c:out value="${truck.regNumber}"></c:out>
-        <c:out value="${truck.working}"></c:out>
-    </c:forEach>
-</h1>
+   <header><jsp:include page="../templates/nav.jsp"/></header>
+
+   <main role="main" class="container">
+       <h1 class="mt-5">Starting page</h1>
+   </main>
+<jsp:include page="../templates/footer.jsp"/>
 </body>
 </html>

@@ -20,13 +20,14 @@ public class MainController {
     @Autowired
     private CityService cityService;
 
-    private static final String INDEX_PAGE = "home";
+    private static final String INDEX_PAGE = "home/home";
+    private static final String TRUCKS_PAGE = "trucks";
 
     @RequestMapping("/home")
     public String showIndexPage(ModelMap map) {
         Truck truck = new Truck();
         truck.setWorking(true);
-        truck.setRegNumber("first");
+        truck.setRegNumber("K612MN");
         truckService.add(truck);
 
         City citySpb = new City();
@@ -47,10 +48,12 @@ public class MainController {
         countryMapService.add(russianMap);
 
         map.addAttribute("trucksList", truckService.truckList());
-
-
-
-
         return INDEX_PAGE;
+    }
+
+    @RequestMapping("/trucks")
+    public String showTrucksPage(ModelMap map) {
+        map.addAttribute("trucksList", truckService.truckList());
+        return TRUCKS_PAGE;
     }
 }
