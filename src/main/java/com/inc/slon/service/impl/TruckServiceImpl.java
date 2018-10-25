@@ -16,13 +16,19 @@ public class TruckServiceImpl implements TruckService {
 
     @Transactional
     @Override
-    public void add(Truck truck){
+    public void add(Truck truck) {
         truckDao.add(truck);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<Truck> truckList(){
+    public List<Truck> truckList() {
         return truckDao.truckList();
+    }
+
+    @Transactional
+    @Override
+    public void removeAllById(String[] ids) {
+        truckDao.removeAllById(ids);
     }
 }

@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -26,5 +27,21 @@ public class TruckDaoImpl implements TruckDao {
         @SuppressWarnings("unused")
         Root<Truck> root = criteriaQuery.from(Truck.class);
         return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public void removeAllById(String[] ids) {
+        //check ids != null;
+        List<Long> listId = new ArrayList<>();
+        if (ids != null) {
+            for (String id : ids) {
+                listId.add(Long.valueOf(id));
+            }
+            int isSuccessful = entityManager.createQuery("DELETE Truck t WHERE id IN (:ids)")
+                    .setParameter("ids", listId).executeUpdate();
+            // if (isSuccessful == 0 ) throw OptimisticLockException..
+        } else {
+            System.out.println("WTF?");
+        }
     }
 }

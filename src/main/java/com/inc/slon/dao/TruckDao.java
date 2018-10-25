@@ -8,4 +8,6 @@ public interface TruckDao {
     void add(Truck truck);
 
     List<Truck> truckList();
+
+    void removeAllById(String[] ids);
 }
