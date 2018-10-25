@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class MainController {
+public class HomeController {
     @Autowired
     private TruckService truckService;
     @Autowired
@@ -24,9 +24,9 @@ public class MainController {
     private CityService cityService;
 
     private static final String INDEX_PAGE = "home/home";
-    private static final String TRUCKS_PAGE = "trucks";
 
-    @RequestMapping("/home")
+
+    @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
         Truck truck = new Truck();
         truck.setWorking(true);
@@ -52,21 +52,5 @@ public class MainController {
 
         map.addAttribute("trucksList", truckService.truckList());
         return INDEX_PAGE;
-    }
-
-    @RequestMapping(value = "/trucks", method = RequestMethod.GET)
-    public String showTrucksPage(ModelMap map) {
-        map.addAttribute("trucksList", truckService.truckList());
-        return TRUCKS_PAGE;
-    }
-
-    @RequestMapping(value = "/trucks", method = RequestMethod.POST)
-    public String deleteTrucks(ModelMap map, HttpServletRequest request) {
-        String[] ids = request.getParameterValues("id");
-        if (ids != null && ids.length > 0) {
-            truckService.removeAllById(ids);
-        }
-        map.addAttribute("trucksList", truckService.truckList());
-        return TRUCKS_PAGE;
     }
 }
