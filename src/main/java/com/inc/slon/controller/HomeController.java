@@ -6,6 +6,7 @@ import com.inc.slon.model.Truck;
 import com.inc.slon.service.CityService;
 import com.inc.slon.service.CountryMapService;
 import com.inc.slon.service.TruckService;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -24,10 +25,13 @@ public class HomeController {
     private CityService cityService;
 
     private static final String INDEX_PAGE = "home/home";
-
+    @Autowired
+    private Logger log;
 
     @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
+        log.error("WTF?___________WTF?");
+        log.info("HELLO!");
         Truck truck = new Truck();
         truck.setWorking(true);
         truck.setRegNumber("K612MN");
