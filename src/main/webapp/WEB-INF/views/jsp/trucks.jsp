@@ -49,24 +49,35 @@
                 <div class="modal-body">
                     <form action="/trucksAdd" method="post">
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Email address</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                            <label for="inputRegNumber">Registration number</label>
+                            <input type="text" name="regNumber" pattern="[A-Za-z]{2}[0-9]{5}" placeholder="2 letters, 5 digits: Ab12345" required class="form-control" id="inputRegNumber">
                         </div>
+
                         <div class="form-group">
-                            <label for="exampleInputPassword1">Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                            <label for="inputWorkShift">Work shift</label>
+                            <input type="text" name="workShift" pattern="[1-2]{1}[0-9]{1}" placeholder="2 digits (24 hours format): 15" required  class="form-control" id="inputWorkShift">
                         </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                            <label class="form-check-label" for="exampleCheck1">Check me out</label>
+
+                        <div class="form-group">
+                            <label for="inputLoadWeight">Load weight</label>
+                            <input type="text" name="loadWeight" pattern="1[5-9]|2[0-5]" placeholder="2 digits (15-25): 22" required  class="form-control" id="inputLoadWeight">
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+
+                        <div class="form-group">
+                            <label for="inputWorking">Working</label>
+                            <input type="text" name="working" pattern="[0-1]" placeholder="1 digit (0 or 1): 1" required  class="form-control" id="inputWorking">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="inputCity">City</label>
+                            <input type="text" name="city" maxlength="30" pattern="[A-Za-z]{1,30}" placeholder="City name (max len - 30 chars): Moscow" required  class="form-control" id="inputCity">
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>

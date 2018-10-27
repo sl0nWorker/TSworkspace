@@ -1,5 +1,8 @@
 package com.inc.slon.controller;
 
+import com.inc.slon.model.City;
+import com.inc.slon.model.Truck;
+import com.inc.slon.service.CityService;
 import com.inc.slon.service.TruckService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -16,6 +20,8 @@ public class TruckController {
     private static final String TRUCKS_PAGE = "trucks";
     @Autowired
     private TruckService truckService;
+    @Autowired
+    private CityService cityService;
     @Autowired
     private Logger log;
 
@@ -42,7 +48,26 @@ public class TruckController {
     }
     //stopper
     @RequestMapping(value = "/trucksAdd", method = RequestMethod.POST)
-    public String addTruck(ModelMap map, HttpServletRequest request) {
+    public String addTruck(@RequestParam("regNumber") String regNumber,
+                           @RequestParam("workShift") int workShift,
+                           @RequestParam("loadWeight") int loadWeight,
+                           @RequestParam("working") int working,
+                           @RequestParam("city") String city,
+                           ModelMap map) {
+        Boolean workingParse = null;
+        if (working == 1){
+            workingParse = new Boolean(true);
+        }else{
+            workingParse = new Boolean(false);
+        }
+        City cityAdd = new City();
+        cityAdd.setCityName(city);
+        cityService.add(cityAdd);
+
+        Truck truckAdd = new Truck(regNumber,workShift,loadWeight,workingParse,cityAdd);
+        log.info("Try add truck with city");
+        truckService.add(truckAdd);
+        log.info("add truck with city was OK");
         map.addAttribute("trucksList", truckService.truckList());
         return TRUCKS_PAGE;
     }

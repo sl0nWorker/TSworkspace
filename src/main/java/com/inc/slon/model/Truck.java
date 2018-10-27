@@ -26,6 +26,16 @@ public class Truck {
     @JoinColumn(name = "CITY_ID")
     private City city;
 
+    public Truck(){
+    }
+
+    public Truck(String regNumber, int workShift,int loadWeight, Boolean working, City city){
+        this.regNumber = regNumber;
+        this.workShift = workShift;
+        this.loadWeight = loadWeight;
+        this.working = working;
+        this.city = city;
+    }
     public Long getId() {
         return id;
     }
