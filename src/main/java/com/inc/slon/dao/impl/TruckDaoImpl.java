@@ -35,7 +35,7 @@ public class TruckDaoImpl implements TruckDao {
         for (String id : ids) {
             listId.add(Long.valueOf(id));
         }
-        int isSuccessful = entityManager.createQuery("DELETE Truck t WHERE id IN (:ids)")
+        int isSuccessful = entityManager.createQuery("DELETE FROM Truck t WHERE t.id IN (:ids)")
                 .setParameter("ids", listId).executeUpdate();
         // if (isSuccessful == 0 ) throw OptimisticLockException..
     }

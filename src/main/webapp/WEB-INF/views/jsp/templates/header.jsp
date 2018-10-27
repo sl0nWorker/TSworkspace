@@ -1,6 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 
-<head>
+
     <meta charset="utf-8">
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -14,5 +14,3 @@
     <!-- Custom styles for this template -->
     <link href="${myTemplateURL}" type="text/css" rel="stylesheet">
 
-
-</head>

@@ -25,17 +25,14 @@ public class HomeController {
     private CityService cityService;
 
     private static final String INDEX_PAGE = "home/home";
+    private static final String TEST_PAGE = "TestJsp";
     @Autowired
     private Logger log;
 
     @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
-        log.error("WTF?___________WTF?");
-        log.info("HELLO!");
-        Truck truck = new Truck();
-        truck.setWorking(true);
-        truck.setRegNumber("K612MN");
-        truckService.add(truck);
+        log.info("I`m in homePage method=get");
+
 
         City citySpb = new City();
         citySpb.setCityName("SPB");
@@ -53,8 +50,21 @@ public class HomeController {
         cityService.add(cityMoscow);
 
         countryMapService.add(russianMap);
+        Truck truck = new Truck();
+        truck.setWorking(true);
+        truck.setRegNumber("K612MN");
+        truck.setLoadWeight(15);
+        truck.setCity(cityMoscow);
+        truck.setWorkShift(10);
+        truckService.add(truck);
 
         map.addAttribute("trucksList", truckService.truckList());
         return INDEX_PAGE;
     }
+
+    @RequestMapping(value = "/Test", method = RequestMethod.GET)
+    public String showTestPage(){
+            return TEST_PAGE;
+    }
+
 }
