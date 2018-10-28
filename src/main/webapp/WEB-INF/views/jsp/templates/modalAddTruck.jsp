@@ -38,6 +38,7 @@
                         <label for="selectCity">City</label>
                         <select name="city" class="form-control" id="selectCity">
                             <c:forEach items="${citiesList}" var="city">
+                                <!-- Send cityId to controller (/trucksAdd) for setting exsicting cityName (in Cities) -->
                                 <option value="${city.id}">
                                     <c:out value="${city.cityName}"/>
                                 </option>

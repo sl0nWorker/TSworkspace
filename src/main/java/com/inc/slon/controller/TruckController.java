@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class TruckController {
@@ -27,16 +28,20 @@ public class TruckController {
 
     @RequestMapping(value = "/trucks", method = RequestMethod.GET)
     public String showTrucksPage(ModelMap map) {
+
+        log.info("cityList size: " + cityService.cityList().size());
+        if (cityService.cityList().size() == 0){
+            City spb = new City();
+            spb.setCityName("SPB");
+            City msc = new City();
+            msc.setCityName("Moscow");
+            City novgorod = new City();
+            novgorod.setCityName("Novgorod");
+            cityService.add(spb);
+            cityService.add(msc);
+            cityService.add(novgorod);
+        }
         //TODO: add warper service to use more then one serivce
-        City spb = new City();
-        spb.setCityName("SPB");
-        City msc = new City();
-        msc.setCityName("Moscow");
-        City novgorod = new City();
-        novgorod.setCityName("Novgorod");
-        cityService.add(spb);
-        cityService.add(msc);
-        cityService.add(novgorod);
         map.addAttribute("trucksList", truckService.truckList());
         map.addAttribute("citiesList", cityService.cityList());
         return TRUCKS_PAGE;
@@ -79,6 +84,7 @@ public class TruckController {
         log.info("Try add truck with city");
         truckService.add(truckAdd);
         log.info("add truck with city was OK");
+        //TODO: add warper service to use more then one serivce
         map.addAttribute("trucksList", truckService.truckList());
         map.addAttribute("citiesList", cityService.cityList());
         //TODO: redirect to /trucks, because f5 add the same truck again
@@ -87,24 +93,37 @@ public class TruckController {
 
     //stopper
     @RequestMapping(value = "/trucksEdit", method = RequestMethod.POST)
-    public String editTruck(@RequestParam("regNumber") String regNumber,
-                            @RequestParam("workShift") int workShift,
-                            @RequestParam("loadWeight") int loadWeight,
-                            @RequestParam("working") int working,
-                            @RequestParam("city") String city,
-                            @RequestParam("idTruck") String idTruck,
+    public String editTruck(@RequestParam(value = "regNumber", required = false) String regNumber,
+                            @RequestParam(value = "workShift", required = false) Integer workShift,
+                            @RequestParam(value = "loadWeight", required = false) Integer loadWeight,
+                            @RequestParam(value = "working", required = false) Integer working,
+                            @RequestParam(value = "city", required = false) String city,
+                            @RequestParam(value = "idTruck", required = false) String idTruck,
                             ModelMap map) {
         log.info(idTruck + " : " + regNumber + " : " + workShift + " : " + loadWeight + " : " + working + " :cityId " + city);
         Truck updateTruck = truckService.findById(idTruck);
-        updateTruck.setRegNumber(regNumber);
-        updateTruck.setWorkShift(workShift);
-        updateTruck.setLoadWeight(loadWeight);
-        if (working == 0)
-            updateTruck.setWorking(false);
-        else
-            updateTruck.setWorking(true);
-        //TODO: make select list of city
-        //updateTruck.setCity();
+
+        if (regNumber != null && !regNumber.equals("")) {
+            updateTruck.setRegNumber(regNumber);
+        }
+        if (workShift != null) {
+            updateTruck.setWorkShift(workShift);
+        }
+        if (loadWeight != null) {
+            updateTruck.setLoadWeight(loadWeight);
+        }
+        if (working != null) {
+            if (working == 0)
+                updateTruck.setWorking(false);
+            else
+                updateTruck.setWorking(true);
+        }
+        //TODO: add warper service to use more then one serivce
+        if(idTruck != null && !idTruck.equals("")){
+            log.info("changin cityName in updateTruck to: " + cityService.findById(city).getCityName());
+            updateTruck.setCity(cityService.findById(city));
+            log.info("updating city was ok");
+        }
         truckService.update(updateTruck);
         //TODO: redirect to /trucks, because f5 add the same truck again
         map.addAttribute("trucksList", truckService.truckList());
