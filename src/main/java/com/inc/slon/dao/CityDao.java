@@ -8,4 +8,6 @@ public interface CityDao {
     void add(City city);
 
     List<City> cityList();
+
+    City findById(String id);
 }

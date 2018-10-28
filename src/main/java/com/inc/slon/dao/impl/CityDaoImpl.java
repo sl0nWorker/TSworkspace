@@ -27,4 +27,9 @@ public class CityDaoImpl implements CityDao {
         Root<City> root = criteriaQuery.from(City.class);
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
+
+    @Override
+    public City findById(String id) {
+        return entityManager.find(City.class, Long.valueOf(id));
+    }
 }

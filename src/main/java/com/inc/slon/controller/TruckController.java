@@ -27,7 +27,18 @@ public class TruckController {
 
     @RequestMapping(value = "/trucks", method = RequestMethod.GET)
     public String showTrucksPage(ModelMap map) {
+        //TODO: add warper service to use more then one serivce
+        City spb = new City();
+        spb.setCityName("SPB");
+        City msc = new City();
+        msc.setCityName("Moscow");
+        City novgorod = new City();
+        novgorod.setCityName("Novgorod");
+        cityService.add(spb);
+        cityService.add(msc);
+        cityService.add(novgorod);
         map.addAttribute("trucksList", truckService.truckList());
+        map.addAttribute("citiesList", cityService.cityList());
         return TRUCKS_PAGE;
     }
 
@@ -44,6 +55,7 @@ public class TruckController {
         log.info("add to model trucklist");
         map.addAttribute("trucksList", truckService.truckList());
         log.info("return trucks page");
+        map.addAttribute("citiesList", cityService.cityList());
         return TRUCKS_PAGE;
     }
 
@@ -53,7 +65,7 @@ public class TruckController {
                            @RequestParam("workShift") int workShift,
                            @RequestParam("loadWeight") int loadWeight,
                            @RequestParam("working") int working,
-                           @RequestParam("city") String city,
+                           @RequestParam("city") String cityId,
                            ModelMap map) {
         Boolean workingParse = null;
         if (working == 1) {
@@ -61,15 +73,14 @@ public class TruckController {
         } else {
             workingParse = new Boolean(false);
         }
-        City cityAdd = new City();
-        cityAdd.setCityName(city);
-        cityService.add(cityAdd);
 
+        City cityAdd = cityService.findById(cityId);
         Truck truckAdd = new Truck(regNumber, workShift, loadWeight, workingParse, cityAdd);
         log.info("Try add truck with city");
         truckService.add(truckAdd);
         log.info("add truck with city was OK");
         map.addAttribute("trucksList", truckService.truckList());
+        map.addAttribute("citiesList", cityService.cityList());
         //TODO: redirect to /trucks, because f5 add the same truck again
         return TRUCKS_PAGE;
     }
@@ -83,7 +94,7 @@ public class TruckController {
                             @RequestParam("city") String city,
                             @RequestParam("idTruck") String idTruck,
                             ModelMap map) {
-        log.info(idTruck + " : " + regNumber + " : " + workShift + " : " + loadWeight + " : " + working + " : " + city);
+        log.info(idTruck + " : " + regNumber + " : " + workShift + " : " + loadWeight + " : " + working + " :cityId " + city);
         Truck updateTruck = truckService.findById(idTruck);
         updateTruck.setRegNumber(regNumber);
         updateTruck.setWorkShift(workShift);
@@ -97,6 +108,7 @@ public class TruckController {
         truckService.update(updateTruck);
         //TODO: redirect to /trucks, because f5 add the same truck again
         map.addAttribute("trucksList", truckService.truckList());
+        map.addAttribute("citiesList", cityService.cityList());
         return TRUCKS_PAGE;
     }
 }

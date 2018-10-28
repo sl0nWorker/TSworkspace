@@ -25,4 +25,10 @@ public class CityServiceImpl implements CityService {
     public List<City> cityList() {
         return cityDao.cityList();
     }
+
+    @Transactional
+    @Override
+    public City findById(String id) {
+        return cityDao.findById(id);
+    }
 }

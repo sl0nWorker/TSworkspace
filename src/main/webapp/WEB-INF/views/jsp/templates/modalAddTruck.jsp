@@ -1,10 +1,11 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- Modal for add new truck -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="addTruckModal" tabindex="-1" role="dialog" aria-labelledby="addTruckModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">
+                <h5 class="modal-title" id="addTruckModalLabel">
                     Fill out the form to create a truck
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -34,8 +35,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inputCity">City</label>
-                        <input type="text" name="city" maxlength="30" pattern="[A-Za-z]{1,30}" placeholder="City name (max len - 30 chars): Moscow" required  class="form-control" id="inputCity">
+                        <label for="selectCity">City</label>
+                        <select name="city" class="form-control" id="selectCity">
+                            <c:forEach items="${citiesList}" var="city">
+                                <option value="${city.id}">
+                                    <c:out value="${city.cityName}"/>
+                                </option>
+                            </c:forEach>
+                        </select>
                     </div>
 
                     <div class="modal-footer">

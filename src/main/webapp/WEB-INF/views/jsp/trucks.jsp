@@ -50,7 +50,7 @@
                 <th colspan="7" scope="col" bgcolor="#faebd7">
                     <!-- Button trigger modal -->
                     <div class="d-flex justify-content-end  ">
-                        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModal">
+                        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#addTruckModal">
                             Add new truck
                         </button>
                     </div>
