@@ -46,6 +46,7 @@ public class TruckController {
         log.info("return trucks page");
         return TRUCKS_PAGE;
     }
+
     //stopper
     @RequestMapping(value = "/trucksAdd", method = RequestMethod.POST)
     public String addTruck(@RequestParam("regNumber") String regNumber,
@@ -55,19 +56,46 @@ public class TruckController {
                            @RequestParam("city") String city,
                            ModelMap map) {
         Boolean workingParse = null;
-        if (working == 1){
+        if (working == 1) {
             workingParse = new Boolean(true);
-        }else{
+        } else {
             workingParse = new Boolean(false);
         }
         City cityAdd = new City();
         cityAdd.setCityName(city);
         cityService.add(cityAdd);
 
-        Truck truckAdd = new Truck(regNumber,workShift,loadWeight,workingParse,cityAdd);
+        Truck truckAdd = new Truck(regNumber, workShift, loadWeight, workingParse, cityAdd);
         log.info("Try add truck with city");
         truckService.add(truckAdd);
         log.info("add truck with city was OK");
+        map.addAttribute("trucksList", truckService.truckList());
+        //TODO: redirect to /trucks, because f5 add the same truck again
+        return TRUCKS_PAGE;
+    }
+
+    //stopper
+    @RequestMapping(value = "/trucksEdit", method = RequestMethod.POST)
+    public String editTruck(@RequestParam("regNumber") String regNumber,
+                            @RequestParam("workShift") int workShift,
+                            @RequestParam("loadWeight") int loadWeight,
+                            @RequestParam("working") int working,
+                            @RequestParam("city") String city,
+                            @RequestParam("idTruck") String idTruck,
+                            ModelMap map) {
+        log.info(idTruck + " : " + regNumber + " : " + workShift + " : " + loadWeight + " : " + working + " : " + city);
+        Truck updateTruck = truckService.findById(idTruck);
+        updateTruck.setRegNumber(regNumber);
+        updateTruck.setWorkShift(workShift);
+        updateTruck.setLoadWeight(loadWeight);
+        if (working == 0)
+            updateTruck.setWorking(false);
+        else
+            updateTruck.setWorking(true);
+        //TODO: make select list of city
+        //updateTruck.setCity();
+        truckService.update(updateTruck);
+        //TODO: redirect to /trucks, because f5 add the same truck again
         map.addAttribute("trucksList", truckService.truckList());
         return TRUCKS_PAGE;
     }

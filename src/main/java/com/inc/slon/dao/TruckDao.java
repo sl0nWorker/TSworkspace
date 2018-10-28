@@ -10,4 +10,8 @@ public interface TruckDao {
     List<Truck> truckList();
 
     void removeAllById(String[] ids);
+
+    Truck findById(String id);
+
+    void update(Truck truck);
 }

@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <head>
     <jsp:include page="templates/header.jsp"/>
+    <!-- Show delete button, if one at least checkbox is pressed -->
     <script type="text/javascript">
         var pressedCheckboxes = 0;
         function showOrHide(checkBoxId, btnDel) {
@@ -33,55 +34,11 @@
 
 
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">
-                        Fill out the form to create a truck
-                    </h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/trucksAdd" method="post">
-                        <div class="form-group">
-                            <label for="inputRegNumber">Registration number</label>
-                            <input type="text" name="regNumber" pattern="[A-Za-z]{2}[0-9]{5}" placeholder="2 letters, 5 digits: Ab12345" required class="form-control" id="inputRegNumber">
-                        </div>
+    <!-- Modal for add new truck -->
+    <jsp:include page="templates/modalAddTruck.jsp"/>
+    <!-- Modal for edit truck -->
+    <jsp:include page="templates/modalEditTruck.jsp"/>
 
-                        <div class="form-group">
-                            <label for="inputWorkShift">Work shift</label>
-                            <input type="text" name="workShift" pattern="[1-2]{1}[0-9]{1}" placeholder="2 digits (24 hours format): 15" required  class="form-control" id="inputWorkShift">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputLoadWeight">Load weight</label>
-                            <input type="text" name="loadWeight" pattern="1[5-9]|2[0-5]" placeholder="2 digits (15-25): 22" required  class="form-control" id="inputLoadWeight">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputWorking">Working</label>
-                            <input type="text" name="working" pattern="[0-1]" placeholder="1 digit (0 or 1): 1" required  class="form-control" id="inputWorking">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="inputCity">City</label>
-                            <input type="text" name="city" maxlength="30" pattern="[A-Za-z]{1,30}" placeholder="City name (max len - 30 chars): Moscow" required  class="form-control" id="inputCity">
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <form action="/trucksDelete" method="post">
 
@@ -106,6 +63,7 @@
                 <th scope="col">Work Shift</th>
                 <th scope="col">Load weight</th>
                 <th scope="col">City</th>
+                <th scope="col">Edit</th>
             </tr>
             </thead>
             <tbody>
@@ -135,6 +93,12 @@
                     <td>
                         <c:out value="${truck.city}"/>
                     </td>
+
+                    <td>
+                        <button type="button" class="btn btn-dark" data-truck-id="${truck.id}" data-toggle="modal" data-target="#editTruckModal">
+                            Edit truck
+                        </button>
+                    </td>
                 </tr>
             </c:forEach>
             </tbody>
@@ -143,5 +107,18 @@
     </form>
 </main>
 <jsp:include page="templates/footer.jsp"/>
+
+<script>
+    $('#editTruckModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var truckId = button.data('truck-id') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+       // modal.find('.modal-title').text('New message to ' + recipient)
+        modal.find('.modal-body #inputIdTruck').val(truckId)
+    })
+</script>
+
 </body>
 </html>

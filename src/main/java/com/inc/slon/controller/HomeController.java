@@ -32,33 +32,6 @@ public class HomeController {
     @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
         log.info("I`m in homePage method=get");
-
-
-        City citySpb = new City();
-        citySpb.setCityName("SPB");
-
-        City cityMoscow = new City();
-        cityMoscow.setCityName("MOSCOW");
-
-        CountryMap russianMap = new CountryMap();
-
-        russianMap.setCityFrom(citySpb);
-        russianMap.setCityTo(cityMoscow);
-        russianMap.setDistance(672);
-
-        cityService.add(citySpb);
-        cityService.add(cityMoscow);
-
-        countryMapService.add(russianMap);
-        Truck truck = new Truck();
-        truck.setWorking(true);
-        truck.setRegNumber("K612MN");
-        truck.setLoadWeight(15);
-        truck.setCity(cityMoscow);
-        truck.setWorkShift(10);
-        truckService.add(truck);
-
-        map.addAttribute("trucksList", truckService.truckList());
         return INDEX_PAGE;
     }
 

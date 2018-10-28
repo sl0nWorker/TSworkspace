@@ -31,4 +31,16 @@ public class TruckServiceImpl implements TruckService {
     public void removeAllById(String[] ids) {
         truckDao.removeAllById(ids);
     }
+
+    @Override
+    @Transactional
+    public Truck findById(String id) {
+        return truckDao.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public void update(Truck truck) {
+        truckDao.update(truck);
+    }
 }

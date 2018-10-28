@@ -39,4 +39,14 @@ public class TruckDaoImpl implements TruckDao {
                 .setParameter("ids", listId).executeUpdate();
         // if (isSuccessful == 0 ) throw OptimisticLockException..
     }
+
+    @Override
+    public Truck findById(String id) {
+        return entityManager.find(Truck.class,Long.valueOf(id));
+    }
+
+    @Override
+    public void update(Truck truck) {
+       entityManager.merge(truck);
+    }
 }
