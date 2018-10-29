@@ -35,79 +35,82 @@
     <!-- Modal for add new trucker -->
     <jsp:include page="templates/modalAddTrucker.jsp"/>
 
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th colspan="7" scope="col" bgcolor="#faebd7">
-                <!-- Button trigger modal -->
-                <div class="d-flex justify-content-end  ">
-                    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#addTruckerModal">
-                        Add new trucker
-                    </button>
-                </div>
-            </th>
-        </tr>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">First name</th>
-            <th scope="col">Last name</th>
-            <th scope="col">Personal number</th>
-            <th scope="col">Work hours</th>
-            <th scope="col">City</th>
-            <th scope="col">Edit</th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${truckersList}" var="trucker">
+    <form action="/truckersDelete" method="post">
+        <table class="table table-bordered">
+            <thead>
             <tr>
-                <td>
-                    <input class="custom-checkbox" type="checkbox" id="${trucker.id}"
-                           onchange='showOrHide("${trucker.id}", "btnDel");' name="id" value="${trucker.id}"/>
-                </td>
-
-                <td>
-                    <c:out value="${trucker.firstName}"/>
-                </td>
-
-                <td>
-                    <c:out value="${trucker.lastName}"/>
-                </td>
-
-                <td>
-                    <c:out value="${trucker.personalNumber}"/>
-                </td>
-
-                <td>
-                    <c:out value="${trucker.workHours}"/>
-                </td>
-
-                    <%--
+                <th colspan="8" scope="col" bgcolor="#faebd7">
+                    <!-- Button trigger modal -->
+                    <div class="d-flex justify-content-end  ">
+                        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#addTruckerModal">
+                            Add new trucker
+                        </button>
+                    </div>
+                </th>
+            </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First name</th>
+                <th scope="col">Last name</th>
+                <th scope="col">Personal number</th>
+                <th scope="col">Work hours</th>
+                <th scope="col">Status</th>
+                <th scope="col">City</th>
+                <th scope="col">Edit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${truckersList}" var="trucker">
+                <tr>
                     <td>
-                         TODO: override toString in status
+                        <input class="custom-checkbox" type="checkbox" id="${trucker.id}"
+                               onchange='showOrHide("${trucker.id}", "btnDel");' name="id" value="${trucker.id}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${trucker.firstName}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${trucker.lastName}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${trucker.personalNumber}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${trucker.workHours}"/>
+                    </td>
+
+
+                    <td>
                         <c:out value="${trucker.status}"/>
                     </td>
-                      --%>
 
-                <td>
-                    <c:out value="${trucker.city}"/>
-                </td>
-                    <%--
-                   <td>
-                        TODO: override toString in truck
-                       <c:out value="${trucker.truck}"/>
-                   </td>
-                   --%>
 
-                <td>
-                    <button type="button" class="btn btn-dark" data-trucker-id="${trucker.id}" data-toggle="modal"
-                            data-target="#editTruckerModal">
-                        Edit truck
-                    </button>
-                </td>
-            </tr>
-        </c:forEach>
-        </tbody>
-    </table>
+                    <td>
+                        <c:out value="${trucker.city}"/>
+                    </td>
+                        <%--
+                       <td>
+                            TODO: override toString in truck
+                           <c:out value="${trucker.truck}"/>
+                       </td>
+                       --%>
+
+                    <td>
+                        <button type="button" class="btn btn-dark" data-trucker-id="${trucker.id}" data-toggle="modal"
+                                data-target="#editTruckerModal">
+                            Edit truck
+                        </button>
+                    </td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+        <button id="btnDel" style='display: none;' class="btn btn-warning btn-block" type="submit">Delete selected</button>
+    </form>
 </main>
 <jsp:include page="templates/footer.jsp"/>
 

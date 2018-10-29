@@ -42,23 +42,6 @@
                                placeholder=" interval [0 - 176]: 55" required class="form-control" id="inputWorkHours">
                     </div>
 
-                    <%--
-                        <%--
-                      <div class="form-group">
-                        <label for="selectStatus">Status</label>
-                        <select name="truckerStatus" class="form-control" id="selectStatus">
-                        TODO: select truckerStatus
-                            <c:forEach items="${truckerStatusList}" var="truckerStatus">
-                                <!-- Send truckId to controller (/truckersAdd) for setting exsicting truck (in Trucks) -->
-                                <option value="${truckerStatus.id}">
-                                    <c:out value="${truckerStatus.status}"/>
-                                </option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    --%>
-                    --%>
-
                     <div class="form-group">
                         <label for="selectCity">City</label>
                         <select name="city" class="form-control" id="selectCity">

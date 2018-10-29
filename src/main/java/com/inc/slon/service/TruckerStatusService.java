@@ -1,10 +1,10 @@
-package com.inc.slon.dao;
+package com.inc.slon.service;
 
 import com.inc.slon.model.TruckerStatus;
 
 import java.util.List;
 
-public interface TruckerStatusDao {
+public interface TruckerStatusService {
     List<TruckerStatus> truckerStatusList();
 
     void add(TruckerStatus truckerStatus);

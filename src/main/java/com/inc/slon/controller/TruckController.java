@@ -11,6 +11,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ import java.util.List;
 
 @Controller
 public class TruckController {
-    private static final String TRUCKS_PAGE = "trucks";
+    private static final String TRUCKS_PAGE = "/trucks";
     @Autowired
     private TruckService truckService;
     @Autowired
@@ -29,18 +30,6 @@ public class TruckController {
     @RequestMapping(value = "/trucks", method = RequestMethod.GET)
     public String showTrucksPage(ModelMap map) {
 
-        log.info("cityList size: " + cityService.cityList().size());
-        if (cityService.cityList().size() == 0){
-            City spb = new City();
-            spb.setCityName("SPB");
-            City msc = new City();
-            msc.setCityName("Moscow");
-            City novgorod = new City();
-            novgorod.setCityName("Novgorod");
-            cityService.add(spb);
-            cityService.add(msc);
-            cityService.add(novgorod);
-        }
         //TODO: add warper service to use more then one serivce
         map.addAttribute("trucksList", truckService.truckList());
         map.addAttribute("citiesList", cityService.cityList());
@@ -48,7 +37,7 @@ public class TruckController {
     }
 
     @RequestMapping(value = "/trucksDelete", method = RequestMethod.POST)
-    public String deleteTrucks(ModelMap map, HttpServletRequest request) {
+    public ModelAndView deleteTrucks(ModelMap map, HttpServletRequest request) {
         log.info("I`m in /trucks post");
         String[] ids = request.getParameterValues("id");
         if (ids != null && ids.length > 0) {
@@ -57,21 +46,18 @@ public class TruckController {
             truckService.removeAllById(ids);
             log.info("removing by id was OK");
         }
-        log.info("add to model trucklist");
-        map.addAttribute("trucksList", truckService.truckList());
-        log.info("return trucks page");
-        map.addAttribute("citiesList", cityService.cityList());
-        return TRUCKS_PAGE;
+        return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 
     //stopper
     @RequestMapping(value = "/trucksAdd", method = RequestMethod.POST)
-    public String addTruck(@RequestParam("regNumber") String regNumber,
-                           @RequestParam("workShift") int workShift,
-                           @RequestParam("loadWeight") int loadWeight,
-                           @RequestParam("working") int working,
-                           @RequestParam("city") String cityId,
-                           ModelMap map) {
+    //TODO: add warper service to use more then one serivce
+    public ModelAndView addTruck(@RequestParam("regNumber") String regNumber,
+                                 @RequestParam("workShift") int workShift,
+                                 @RequestParam("loadWeight") int loadWeight,
+                                 @RequestParam("working") int working,
+                                 @RequestParam("city") String cityId,
+                                 ModelMap map) {
         Boolean workingParse = null;
         if (working == 1) {
             workingParse = new Boolean(true);
@@ -84,11 +70,9 @@ public class TruckController {
         log.info("Try add truck with city");
         truckService.add(truckAdd);
         log.info("add truck with city was OK");
-        //TODO: add warper service to use more then one serivce
-        map.addAttribute("trucksList", truckService.truckList());
-        map.addAttribute("citiesList", cityService.cityList());
-        //TODO: redirect to /trucks, because f5 add the same truck again
-        return TRUCKS_PAGE;
+
+
+        return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 
     //stopper
@@ -119,7 +103,7 @@ public class TruckController {
                 updateTruck.setWorking(true);
         }
         //TODO: add warper service to use more then one serivce
-        if(idTruck != null && !idTruck.equals("")){
+        if (idTruck != null && !idTruck.equals("")) {
             log.info("changin cityName in updateTruck to: " + cityService.findById(city).getCityName());
             updateTruck.setCity(cityService.findById(city));
             log.info("updating city was ok");

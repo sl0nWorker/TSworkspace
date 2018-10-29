@@ -3,14 +3,14 @@ package com.inc.slon.model;
 import javax.persistence.*;
 
 @Entity
-@Table (name = "TRUCKER_STATUS")
+@Table(name = "TRUCKER_STATUS")
 public class TruckerStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name ="STATUS")
+    @Column(name = "STATUS")
     private String status;
 
     public Long getId() {
@@ -23,5 +23,10 @@ public class TruckerStatus {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return status;
     }
 }

@@ -26,7 +26,7 @@ public class City {
     }
 
     @Override
-    public String toString(){
-        return cityName+" : "+ id;
+    public String toString() {
+        return cityName;
     }
 }

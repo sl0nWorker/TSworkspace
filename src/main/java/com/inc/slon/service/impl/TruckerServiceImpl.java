@@ -25,4 +25,10 @@ public class TruckerServiceImpl implements TruckerService {
     public void add(Trucker trucker) {
         truckerDao.add(trucker);
     }
+
+    @Transactional
+    @Override
+    public void removeAllById(String[] ids) {
+        truckerDao.removeAllById(ids);
+    }
 }

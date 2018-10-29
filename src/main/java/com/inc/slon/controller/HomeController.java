@@ -3,9 +3,11 @@ package com.inc.slon.controller;
 import com.inc.slon.model.City;
 import com.inc.slon.model.CountryMap;
 import com.inc.slon.model.Truck;
+import com.inc.slon.model.TruckerStatus;
 import com.inc.slon.service.CityService;
 import com.inc.slon.service.CountryMapService;
 import com.inc.slon.service.TruckService;
+import com.inc.slon.service.TruckerStatusService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +22,7 @@ public class HomeController {
     @Autowired
     private TruckService truckService;
     @Autowired
-    private CountryMapService countryMapService;
+    private TruckerStatusService truckerStatusService;
     @Autowired
     private CityService cityService;
 
@@ -32,6 +34,35 @@ public class HomeController {
     @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
         log.info("I`m in homePage method=get");
+
+        //TODO: remove it (Adding 3 default status for testing)
+        if(truckerStatusService.truckerStatusList().size() == 0){
+            TruckerStatus truckerStatusFree = new TruckerStatus();
+            truckerStatusFree.setStatus("FREE");
+            TruckerStatus truckerStatusWork = new TruckerStatus();
+            truckerStatusWork.setStatus("WORK");
+            TruckerStatus truckerStatusWheel= new TruckerStatus();
+            truckerStatusWheel.setStatus("WHEEL");
+            truckerStatusService.add(truckerStatusFree);
+            truckerStatusService.add(truckerStatusWork);
+            truckerStatusService.add(truckerStatusWheel);
+        }
+
+        //TODO: remove it (Adding 3 default cities for testing)
+        log.info("cityList size: " + cityService.cityList().size());
+        if (cityService.cityList().size() == 0) {
+            City spb = new City();
+            spb.setCityName("SPB");
+            City msc = new City();
+            msc.setCityName("Moscow");
+            City novgorod = new City();
+            novgorod.setCityName("Novgorod");
+            cityService.add(spb);
+            cityService.add(msc);
+            cityService.add(novgorod);
+        }
+
+
         return INDEX_PAGE;
     }
 

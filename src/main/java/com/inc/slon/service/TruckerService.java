@@ -8,4 +8,6 @@ public interface TruckerService {
     List<Trucker> truckerList();
 
     void add(Trucker trucker);
+
+    void removeAllById(String[] ids);
 }
