@@ -10,4 +10,8 @@ public interface TruckerDao {
     void add(Trucker trucker);
 
     void removeAllById(String[] ids);
+
+    Trucker findById(Long idTrucker);
+
+    void update(Trucker updateTrucker);
 }

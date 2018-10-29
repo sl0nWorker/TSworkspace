@@ -77,15 +77,21 @@ public class TruckController {
 
     //stopper
     @RequestMapping(value = "/trucksEdit", method = RequestMethod.POST)
-    public String editTruck(@RequestParam(value = "regNumber", required = false) String regNumber,
-                            @RequestParam(value = "workShift", required = false) Integer workShift,
-                            @RequestParam(value = "loadWeight", required = false) Integer loadWeight,
-                            @RequestParam(value = "working", required = false) Integer working,
-                            @RequestParam(value = "city", required = false) String city,
-                            @RequestParam(value = "idTruck", required = false) String idTruck,
-                            ModelMap map) {
+    public ModelAndView editTruck(@RequestParam(value = "regNumber", required = false) String regNumber,
+                                  @RequestParam(value = "workShift", required = false) Integer workShift,
+                                  @RequestParam(value = "loadWeight", required = false) Integer loadWeight,
+                                  @RequestParam(value = "working", required = false) Integer working,
+                                  @RequestParam(value = "city", required = false) String city,
+                                  @RequestParam(value = "idTruck", required = false) String idTruck,
+                                  ModelMap map) {
         log.info(idTruck + " : " + regNumber + " : " + workShift + " : " + loadWeight + " : " + working + " :cityId " + city);
-        Truck updateTruck = truckService.findById(idTruck);
+
+        Truck updateTruck = null;
+        if (idTruck != null && !idTruck.equals("")) {
+            updateTruck = truckService.findById(idTruck);
+        } else {
+            log.error("(/trucksEdit,post) idTruck = null or empty, updating truck is impossible");
+        }
 
         if (regNumber != null && !regNumber.equals("")) {
             updateTruck.setRegNumber(regNumber);
@@ -96,6 +102,7 @@ public class TruckController {
         if (loadWeight != null) {
             updateTruck.setLoadWeight(loadWeight);
         }
+        //TODO: add select list with strings true/false
         if (working != null) {
             if (working == 0)
                 updateTruck.setWorking(false);
@@ -103,15 +110,13 @@ public class TruckController {
                 updateTruck.setWorking(true);
         }
         //TODO: add warper service to use more then one serivce
-        if (idTruck != null && !idTruck.equals("")) {
+        if (city != null && !city.equals("")) {
             log.info("changin cityName in updateTruck to: " + cityService.findById(city).getCityName());
             updateTruck.setCity(cityService.findById(city));
             log.info("updating city was ok");
         }
         truckService.update(updateTruck);
-        //TODO: redirect to /trucks, because f5 add the same truck again
-        map.addAttribute("trucksList", truckService.truckList());
-        map.addAttribute("citiesList", cityService.cityList());
-        return TRUCKS_PAGE;
+
+        return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 }

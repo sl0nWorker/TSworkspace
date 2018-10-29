@@ -17,10 +17,10 @@ public class Trucker {
     private String lastName;
 
     @Column(name = "PERSONAL_NUMBER")
-    private int personalNumber;
+    private Integer personalNumber;
 
     @Column(name = "WORK_HOURS")
-    private int workHours;
+    private Integer workHours;
 
     @OneToOne
     @JoinColumn(name = "STATUS_ID")
@@ -54,19 +54,19 @@ public class Trucker {
         this.lastName = lastName;
     }
 
-    public int getPersonalNumber() {
+    public Integer getPersonalNumber() {
         return personalNumber;
     }
 
-    public void setPersonalNumber(int personalNumber) {
+    public void setPersonalNumber(Integer personalNumber) {
         this.personalNumber = personalNumber;
     }
 
-    public int getWorkHours() {
+    public Integer getWorkHours() {
         return workHours;
     }
 
-    public void setWorkHours(int workHours) {
+    public void setWorkHours(Integer workHours) {
         this.workHours = workHours;
     }
 

@@ -31,4 +31,16 @@ public class TruckerServiceImpl implements TruckerService {
     public void removeAllById(String[] ids) {
         truckerDao.removeAllById(ids);
     }
+
+    @Transactional
+    @Override
+    public Trucker findById(Long idTrucker) {
+        return truckerDao.findById(idTrucker);
+    }
+
+    @Transactional
+    @Override
+    public void update(Trucker updateTrucker) {
+        truckerDao.update(updateTrucker);
+    }
 }

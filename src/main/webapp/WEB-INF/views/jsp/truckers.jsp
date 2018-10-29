@@ -34,6 +34,8 @@
     <h1 class="mt-5">Truckers</h1>
     <!-- Modal for add new trucker -->
     <jsp:include page="templates/modalAddTrucker.jsp"/>
+    <!-- Modal for edit trucker -->
+    <jsp:include page="templates/modalEditTrucker.jsp"/>
 
     <form action="/truckersDelete" method="post">
         <table class="table table-bordered">

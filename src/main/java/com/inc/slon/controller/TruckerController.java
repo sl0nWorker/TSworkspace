@@ -6,6 +6,7 @@ import com.inc.slon.model.Truck;
 import com.inc.slon.model.Trucker;
 import com.inc.slon.model.TruckerStatus;
 import com.inc.slon.service.CityService;
+import com.inc.slon.service.TruckService;
 import com.inc.slon.service.TruckerService;
 import com.inc.slon.service.TruckerStatusService;
 import org.apache.log4j.Logger;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 @Controller
 public class TruckerController {
     private static final String TRUCKERS_PAGE = "/truckers";
+    private static final String ERROR_PAGE = "/error";
     //TODO: add service that use truckerService and cityService, don`t use more then one service in controller
     @Autowired
     private TruckerService truckerService;
@@ -30,6 +32,9 @@ public class TruckerController {
     private CityService cityService;
     @Autowired
     private TruckerStatusService truckerStatusService;
+    @Autowired
+    private TruckService truckService;
+
     @Autowired
     private Logger log;
 
@@ -53,7 +58,7 @@ public class TruckerController {
                                  @RequestParam(value = "city") String cityId,
                                  //TODO: add truck required = true, selected list (unused trucks)
                                  ModelMap map) {
-
+        //TODO: show in jsp edit select list of unused trucks, and set trucker city as truck city
         log.info("name: " + firstName + ", lastName: " + lastName + ", personalNumber: " + personalNumber + ", workHours: " + workHours);
         //TODO: add constructor in Trucker
         //Trucker truckerAdd = new Trucker(firstName, lastName, personalNumber, workHours, cityAdd);
@@ -95,6 +100,83 @@ public class TruckerController {
         } else {
             log.error("(/truckersDelete, post) String[] ids = null or ids.length <=0 ");
         }
+        return new ModelAndView("redirect:" + TRUCKERS_PAGE);
+    }
+
+    //stopper
+    @RequestMapping(value = "/truckersEdit", method = RequestMethod.POST)
+    public ModelAndView editTruck(@RequestParam(value = "firstName", required = false) String firstName,
+                                  @RequestParam(value = "lastName", required = false) String lastName,
+                                  @RequestParam(value = "personalNumber", required = false) Integer personalNumber,
+                                  @RequestParam(value = "workHours", required = false) Integer workHours,
+                                  @RequestParam(value = "statusId", required = false) String statusId,
+                                  @RequestParam(value = "city", required = false) String cityId,
+                                  @RequestParam(value = "truckId", required = false) String truckId,
+                                  @RequestParam(value = "truckerId", required = false) Long truckerId,
+                                  ModelMap map) {
+
+        // Cant edit trucker without truckerId
+        if (truckerId == null){
+            map.addAttribute("error: 'put error msg here'");
+            log.error("error in (/truckersEdit, post) truckerId = null");
+            return new ModelAndView("redirect:" + ERROR_PAGE);
+        }
+            //TODO: checking if trucker is FREE, else ERROR MESSAGE: "you can`t edit this trucker"
+
+            log.info(truckerId + " : " + firstName + " : " + lastName + " : " + personalNumber + " : " + workHours + " : " + statusId + " :cityId " + cityId + " : " + truckId);
+
+        Trucker updateTrucker = truckerService.findById(truckerId);
+
+        if (firstName != null && !firstName.equals("")) {
+            updateTrucker.setFirstName(firstName);
+        } else {
+            log.info("(/truckerEdit, post) firstName = null or empty");
+        }
+
+        if (lastName != null && !lastName.equals("")) {
+            updateTrucker.setLastName(lastName);
+        } else {
+            log.info("(/truckerEdit, post) lastName = null or empty");
+        }
+
+        if (personalNumber != null) {
+            updateTrucker.setPersonalNumber(personalNumber);
+        } else {
+            log.info("(/truckerEdit, post) personalNumber = null");
+        }
+
+        if (workHours != null) {
+            updateTrucker.setWorkHours(workHours);
+        } else {
+            log.info("(/truckerEdit, post) workHours = null");
+        }
+
+        if (statusId != null && !statusId.equals("")) {
+            updateTrucker.setStatus(truckerStatusService.findById(statusId));
+        } else {
+            log.info("(/truckerEdit, post) statusId = null or empty");
+        }
+
+        if (cityId != null && !cityId.equals("")) {
+            log.info("changing cityName in updateTrucker to: " + cityService.findById(cityId).getCityName());
+            updateTrucker.setCity(cityService.findById(cityId));
+            log.info("updating city was ok");
+        } else {
+            log.info("(/truckersEdit, post) cityId = null or empty");
+        }
+
+        //TODO: show in jsp edit select list of trucks in the same city as the trucker"
+        if (truckId != null && !truckId.equals("")) {
+            log.info("changing truck in updateTrucker to: " + truckService.findById(truckId).getRegNumber());
+            updateTrucker.setCity(cityService.findById(cityId));
+            log.info("updating city was ok");
+        } else {
+            log.info("(/truckersEdit, post) cityId = null or empty");
+        }
+
+
+        truckerService.update(updateTrucker);
+
         return new ModelAndView("redirect:" + TRUCKERS_PAGE);
     }
 }

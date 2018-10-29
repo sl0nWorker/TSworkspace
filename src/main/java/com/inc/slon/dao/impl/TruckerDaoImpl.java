@@ -46,4 +46,14 @@ public class TruckerDaoImpl implements TruckerDao {
         if (isSuccessful == 0)
             log.error("(TruckerDaoImpl, removeAllById) String[] ids: " + listId.toString());
     }
+
+    @Override
+    public Trucker findById(Long idTrucker) {
+        return entityManager.find(Trucker.class, idTrucker);
+    }
+
+    @Override
+    public void update(Trucker updateTrucker) {
+        entityManager.merge(updateTrucker);
+    }
 }
