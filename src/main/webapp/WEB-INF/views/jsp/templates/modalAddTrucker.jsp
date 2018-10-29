@@ -54,21 +54,6 @@
                         </select>
                     </div>
 
-                    <%--
-                      <div class="form-group">
-                        <label for="selectTruck">Truck</label>
-                        <select name="truck" class="form-control" id="selectTruck">
-                        TODO: select in truckList (only where truckers number < 2
-                            <c:forEach items="${trucksList}" var="truck">
-                                <!-- Send truckId to controller (/truckersAdd) for setting exsicting truck (in Trucks) -->
-                                <option value="${truck.id}">
-                                    <c:out value="${truck.regNumber}"/>
-                                </option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                    --%>
-
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>

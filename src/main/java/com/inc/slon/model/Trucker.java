@@ -93,4 +93,9 @@ public class Trucker {
     public void setTruck(Truck truck) {
         this.truck = truck;
     }
+
+    @Override
+    public String toString(){
+        return firstName + " " + lastName + " " + personalNumber;
+    }
 }

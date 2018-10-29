@@ -29,16 +29,17 @@ public class TruckController {
 
     @RequestMapping(value = "/trucks", method = RequestMethod.GET)
     public String showTrucksPage(ModelMap map) {
-
+        log.info("(/trucks,get) start");
         //TODO: add warper service to use more then one serivce
         map.addAttribute("trucksList", truckService.truckList());
         map.addAttribute("citiesList", cityService.cityList());
+        log.info("(/trucks,get) end, return TRUCKS_PAGE");
         return TRUCKS_PAGE;
     }
 
     @RequestMapping(value = "/trucksDelete", method = RequestMethod.POST)
     public ModelAndView deleteTrucks(ModelMap map, HttpServletRequest request) {
-        log.info("I`m in /trucks post");
+        log.info("(/trucksDelete, post), start");
         String[] ids = request.getParameterValues("id");
         if (ids != null && ids.length > 0) {
             log.info("Try to remove by Id");
@@ -46,6 +47,7 @@ public class TruckController {
             truckService.removeAllById(ids);
             log.info("removing by id was OK");
         }
+        log.info("(/trucksDelete, post), end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 
@@ -58,6 +60,7 @@ public class TruckController {
                                  @RequestParam("working") int working,
                                  @RequestParam("city") String cityId,
                                  ModelMap map) {
+        log.info("(/trucksAdd,post) start");
         Boolean workingParse = null;
         if (working == 1) {
             workingParse = new Boolean(true);
@@ -71,7 +74,7 @@ public class TruckController {
         truckService.add(truckAdd);
         log.info("add truck with city was OK");
 
-
+        log.info("(/trucksAdd,post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 
@@ -84,6 +87,7 @@ public class TruckController {
                                   @RequestParam(value = "city", required = false) String city,
                                   @RequestParam(value = "idTruck", required = false) String idTruck,
                                   ModelMap map) {
+        log.info("(/trucksEdit,post) start");
         log.info(idTruck + " : " + regNumber + " : " + workShift + " : " + loadWeight + " : " + working + " :cityId " + city);
 
         Truck updateTruck = null;
@@ -117,6 +121,7 @@ public class TruckController {
         }
         truckService.update(updateTruck);
 
+        log.info("(/trucksEdit,post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 }

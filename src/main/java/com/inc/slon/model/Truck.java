@@ -26,6 +26,8 @@ public class Truck {
     @JoinColumn(name = "CITY_ID")
     private City city;
 
+
+
     public Truck(){
     }
 
@@ -79,5 +81,11 @@ public class Truck {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    @Override
+    public String toString(){
+        //TODO: delete id (id for testing)
+        return regNumber + id;
     }
 }

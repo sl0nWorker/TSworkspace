@@ -33,7 +33,7 @@ public class HomeController {
 
     @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
-        log.info("I`m in homePage method=get");
+        log.info("(/home, get) start");
 
         //TODO: remove it (Adding 3 default status for testing)
         if(truckerStatusService.truckerStatusList().size() == 0){
@@ -62,7 +62,7 @@ public class HomeController {
             cityService.add(novgorod);
         }
 
-
+        log.info("(/home, get) end, return INDEX_PAGE");
         return INDEX_PAGE;
     }
 

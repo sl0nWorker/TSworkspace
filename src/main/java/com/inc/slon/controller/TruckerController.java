@@ -40,11 +40,13 @@ public class TruckerController {
 
     @RequestMapping(value = "/truckers", method = RequestMethod.GET)
     public String showTruckersPage(ModelMap map) {
+        log.info("(/truckers, get) start");
         //TODO: add warper service to use more then one serivce
         //TODO: add checking unused trucks to add in trucksList (select list in modal addTrucker)
         map.addAttribute("truckersList", truckerService.truckerList());
         map.addAttribute("citiesList", cityService.cityList());
         map.addAttribute("truckerStatusList", truckerStatusService.truckerStatusList());
+        log.info("(/truckers, get) end, return TRUCKERS_PAGE");
         return TRUCKERS_PAGE;
     }
 
@@ -56,8 +58,8 @@ public class TruckerController {
                                  @RequestParam("personalNumber") int personalNumber,
                                  @RequestParam("workHours") int workHours,
                                  @RequestParam(value = "city") String cityId,
-                                 //TODO: add truck required = true, selected list (unused trucks)
                                  ModelMap map) {
+        log.info("(/truckersAdd, post) start");
         //TODO: show in jsp edit select list of unused trucks, and set trucker city as truck city
         log.info("name: " + firstName + ", lastName: " + lastName + ", personalNumber: " + personalNumber + ", workHours: " + workHours);
         //TODO: add constructor in Trucker
@@ -85,11 +87,13 @@ public class TruckerController {
         truckerService.add(truckerAdd);
         log.info("add truck with city was OK");
 
+        log.info("(/truckersAdd, post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKERS_PAGE);
     }
 
     @RequestMapping(value = "/truckersDelete", method = RequestMethod.POST)
     public ModelAndView deleteTruckers(ModelMap map, HttpServletRequest request) {
+        log.info("(/truckersDelete, post) start");
         log.info("I`m in /truckersDelete post");
         String[] ids = request.getParameterValues("id");
         if (ids != null && ids.length > 0) {
@@ -100,6 +104,7 @@ public class TruckerController {
         } else {
             log.error("(/truckersDelete, post) String[] ids = null or ids.length <=0 ");
         }
+        log.info("(/truckersDelete, post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKERS_PAGE);
     }
 
@@ -111,9 +116,9 @@ public class TruckerController {
                                   @RequestParam(value = "workHours", required = false) Integer workHours,
                                   @RequestParam(value = "statusId", required = false) String statusId,
                                   @RequestParam(value = "city", required = false) String cityId,
-                                  @RequestParam(value = "truckId", required = false) String truckId,
                                   @RequestParam(value = "truckerId", required = false) Long truckerId,
                                   ModelMap map) {
+        log.info("(/truckersEdit, post) start");
 
         // Cant edit trucker without truckerId
         if (truckerId == null){
@@ -123,7 +128,7 @@ public class TruckerController {
         }
             //TODO: checking if trucker is FREE, else ERROR MESSAGE: "you can`t edit this trucker"
 
-            log.info(truckerId + " : " + firstName + " : " + lastName + " : " + personalNumber + " : " + workHours + " : " + statusId + " :cityId " + cityId + " : " + truckId);
+            log.info(truckerId + " : " + firstName + " : " + lastName + " : " + personalNumber + " : " + workHours + " : " + statusId + " :cityId " + cityId);
 
         Trucker updateTrucker = truckerService.findById(truckerId);
 
@@ -165,18 +170,10 @@ public class TruckerController {
             log.info("(/truckersEdit, post) cityId = null or empty");
         }
 
-        //TODO: show in jsp edit select list of trucks in the same city as the trucker"
-        if (truckId != null && !truckId.equals("")) {
-            log.info("changing truck in updateTrucker to: " + truckService.findById(truckId).getRegNumber());
-            updateTrucker.setCity(cityService.findById(cityId));
-            log.info("updating city was ok");
-        } else {
-            log.info("(/truckersEdit, post) cityId = null or empty");
-        }
-
-
+        log.info("(/truckersEdit, post) try to update Trucker");
         truckerService.update(updateTrucker);
 
+        log.info("(/truckersEdit, post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKERS_PAGE);
     }
 }

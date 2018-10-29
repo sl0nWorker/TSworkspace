@@ -95,6 +95,7 @@
                     </td>
 
                     <td>
+                        <%-- Send data('truck-id') = truck.id to modal through <script> #editTruckModal --%>
                         <button type="button" class="btn btn-dark" data-truck-id="${truck.id}" data-toggle="modal" data-target="#editTruckModal">
                             Edit truck
                         </button>

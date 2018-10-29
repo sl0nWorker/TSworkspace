@@ -41,7 +41,7 @@
         <table class="table table-bordered">
             <thead>
             <tr>
-                <th colspan="8" scope="col" bgcolor="#faebd7">
+                <th colspan="9" scope="col" bgcolor="#faebd7">
                     <!-- Button trigger modal -->
                     <div class="d-flex justify-content-end  ">
                         <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#addTruckerModal">
@@ -58,6 +58,7 @@
                 <th scope="col">Work hours</th>
                 <th scope="col">Status</th>
                 <th scope="col">City</th>
+                <th scope="col">Truck</th>
                 <th scope="col">Edit</th>
             </tr>
             </thead>
@@ -94,28 +95,43 @@
                     <td>
                         <c:out value="${trucker.city}"/>
                     </td>
-                        <%--
-                       <td>
-                            TODO: override toString in truck
-                           <c:out value="${trucker.truck}"/>
-                       </td>
-                       --%>
+
+                    <td>
+                        <c:if test="${empty trucker.truck}">
+                            Not assigned
+                        </c:if>
+                        <c:if test="${not empty trucker.truck}">
+                            ${trucker.truck}
+                        </c:if>
+                    </td>
+
 
                     <td>
                         <button type="button" class="btn btn-dark" data-trucker-id="${trucker.id}" data-toggle="modal"
                                 data-target="#editTruckerModal">
-                            Edit truck
+                            Edit trucker
                         </button>
                     </td>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
-        <button id="btnDel" style='display: none;' class="btn btn-warning btn-block" type="submit">Delete selected</button>
+        <button id="btnDel" style='display: none;' class="btn btn-warning btn-block" type="submit">Delete selected
+        </button>
     </form>
 </main>
 <jsp:include page="templates/footer.jsp"/>
 
+<script>
+    $('#editTruckerModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var truckerId = button.data('trucker-id') // Extract info from data-* attributes
+        // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
+        // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
+        var modal = $(this)
+        modal.find('.modal-body #inputTruckerId').val(truckerId)
+    })
+</script>
 
 </body>
 </html>
