@@ -18,7 +18,7 @@
             <th colspan="5" scope="col" bgcolor="#faebd7">
                 <!-- Button trigger modal -->
                 <div class="d-flex justify-content-end  ">
-                    <button type="button" class="btn btn-dark" onclick="location.href='/createOrder'">
+                    <button type="button" class="btn btn-dark" onclick="location.href='/createRouteList'">
                         Add new order
                     </button>
                 </div>

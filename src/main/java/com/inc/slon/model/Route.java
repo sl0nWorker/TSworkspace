@@ -48,4 +48,9 @@ public class Route {
     public void setUnloading(Boolean unloading) {
         this.unloading = unloading;
     }
+
+    @Override
+    public String toString(){
+        return "id: " + id + " freight: " + freight + " unloading: " + unloading;
+    }
 }

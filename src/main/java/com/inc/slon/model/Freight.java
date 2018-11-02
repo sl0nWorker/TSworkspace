@@ -49,5 +49,9 @@ public class Freight {
         this.freightStatus = freightStatus;
     }
 
-
+    @Override
+    public String toString(){
+        //TODO: remove id, id for testing
+        return name + " m(kg): " + weight + " id: " + id;
+    }
 }

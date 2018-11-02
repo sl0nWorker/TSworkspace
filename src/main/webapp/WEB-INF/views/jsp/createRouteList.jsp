@@ -30,8 +30,8 @@
 
 <main role="main" class="container">
 
-    <h1 class="mt-5">Creating order</h1>
-    <form action="/createOrder/deleteRoute" method="post">
+    <h1 class="mt-5">Creating route list</h1>
+    <form action="/createRouteList/deleteRoute" method="post" id="formDeleteRoute">
 
         <table class="table table-bordered">
             <thead>
@@ -43,11 +43,11 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${order.routeList}" var="route">
+            <c:forEach items="${routeList}" var="route" varStatus="routeListLoop">
                 <tr>
                     <td>
-                        <input class="custom-checkbox" type="checkbox" id="${route.id}"
-                               onchange='showOrHide("${route.id}", "btnDel");' name="id" value="${route.id}"/>
+                        <input class="custom-checkbox" type="checkbox" id="${routeListLoop.count}"
+                               onchange='showOrHide("${routeListLoop.count}", "btnDel");' name="id" value="${routeListLoop.count}"/>
                     </td>
 
                     <td>
@@ -67,10 +67,10 @@
             </c:forEach>
             </tbody>
         </table>
-        <button id="btnDel" style='display: none;' class="btn btn-warning btn-block" type="submit">Delete selected</button>
+        <button id="btnDel" form="formDeleteRoute" style='display: none;' class="btn btn-warning btn-block" type="submit">Delete selected</button>
     </form>
 
-    <form action="/createOrder" method="post">
+    <form action="/createRouteList" method="post">
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -86,7 +86,7 @@
                             <label for="selectCity">City</label>
                             <select name="city" class="form-control" id="selectCity">
                                 <c:forEach items="${citiesList}" var="city">
-                                    <!-- Send cityId to controller (/createOrder)  -->
+                                    <!-- Send cityId to controller (/createRouteList)  -->
                                     <option value="${city.id}">
                                         <c:out value="${city.cityName}"/>
                                     </option>
@@ -134,6 +134,9 @@
         </table>
     </form>
 
+    <form action="/createRouteList/addRouteList" method="post" id="formAddRouteList">
+
+    </form>
 
 
 </main>
