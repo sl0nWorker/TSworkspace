@@ -10,14 +10,12 @@ public class Freight {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "NUMBER")
-    private int number;
 
     @Column(name = "NAME")
     private String name;
 
     @Column(name = "WEIGHT")
-    private int weight;
+    private Integer weight;
 
     @OneToOne
     @JoinColumn(name = "STATUS_ID")
@@ -25,14 +23,6 @@ public class Freight {
 
     public Long getId() {
         return id;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
     }
 
     public String getName() {
@@ -43,11 +33,11 @@ public class Freight {
         this.name = name;
     }
 
-    public int getWeight() {
+    public Integer getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(Integer weight) {
         this.weight = weight;
     }
 
@@ -58,4 +48,6 @@ public class Freight {
     public void setFreightStatus(FreightStatus freightStatus) {
         this.freightStatus = freightStatus;
     }
+
+
 }

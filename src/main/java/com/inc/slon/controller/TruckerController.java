@@ -117,7 +117,9 @@ public class TruckerController {
                                   @RequestParam(value = "statusId", required = false) String statusId,
                                   @RequestParam(value = "city", required = false) String cityId,
                                   @RequestParam(value = "truckerId", required = false) Long truckerId,
-                                  ModelMap map) {
+                                  ModelMap map,HttpServletRequest request) {
+        //request.getSession().setAttribute("");
+
         log.info("(/truckersEdit, post) start");
 
         // Cant edit trucker without truckerId
