@@ -24,6 +24,7 @@
                 </div>
             </th>
         </tr>
+        <c:if test = "${orderList != null && orderList.size() != 0}">
         <tr>
             <th scope="col">Order number</th>
             <th scope="col">Ready</th>
@@ -31,6 +32,7 @@
             <th scope="col">Truck</th>
             <th scope="col">Trucker list</th>
         </tr>
+        </c:if>
         </thead>
         <tbody>
         <c:forEach items="${orderList}" var="order">

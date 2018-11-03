@@ -50,17 +50,20 @@
                     </div>
                 </th>
             </tr>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">First name</th>
-                <th scope="col">Last name</th>
-                <th scope="col">Personal number</th>
-                <th scope="col">Work hours</th>
-                <th scope="col">Status</th>
-                <th scope="col">City</th>
-                <th scope="col">Truck</th>
-                <th scope="col">Edit</th>
-            </tr>
+            <c:if test = "${truckersList!= null && truckersList.size() != 0}">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First name</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Personal number</th>
+                    <th scope="col">Work hours</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Truck</th>
+                    <th scope="col">Edit</th>
+                </tr>
+            </c:if>
+
             </thead>
             <tbody>
             <c:forEach items="${truckersList}" var="trucker">

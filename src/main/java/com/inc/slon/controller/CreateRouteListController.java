@@ -74,6 +74,7 @@ public class CreateRouteListController {
                                         @RequestParam(value = "freightWeight") Integer freightWeight,
                                         @RequestParam(value = "loading") String loading) {
         log.info("/createRouteList, post) start");
+        //TODO: add checking that loading is ahead of unloading. If unloading , check existing way froma A to B
         // TODO: add type checks
         List<Route> routeList = (List<Route>) httpSession.getAttribute("routeList");
         log.info("/createRouteList,post getOrder");
@@ -139,6 +140,28 @@ public class CreateRouteListController {
         map.addAttribute("routeList", routeList);
         log.info("(/createRouteList/deleteRoute, post) end");
         return new ModelAndView("redirect:/createRouteList");
+    }
+
+    @RequestMapping(value = {"/createRouteList/saveRouteList"}, method = RequestMethod.POST)
+    public ModelAndView saveRouteList(ModelMap map, HttpSession httpSession) {
+
+        log.info("(/createRouteList/saveRouteList, post) start");
+        // TODO: add checks
+        List<Route> savedRouteList = (List<Route>)httpSession.getAttribute("routeList");
+        httpSession.setAttribute("savedRouteList",savedRouteList);
+        map.addAttribute("savedRouteList",savedRouteList);
+        log.info("(/createRouteList/saveRouteList, post) end");
+        return new ModelAndView("redirect:/createRouteList/saveRouteList");
+    }
+
+    @RequestMapping(value = {"/createRouteList/saveRouteList"}, method = RequestMethod.GET)
+    public String showRouteList(ModelMap map, HttpSession httpSession) {
+
+        log.info("(/createRouteList/saveRouteList, get) start");
+
+
+        log.info("(/createRouteList/saveRouteList, get) end");
+        return "savedRouteList";
     }
 }
 

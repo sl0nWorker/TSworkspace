@@ -56,15 +56,17 @@
                     </div>
                 </th>
             </tr>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Registration number</th>
-                <th scope="col">Working</th>
-                <th scope="col">Work Shift</th>
-                <th scope="col">Load weight</th>
-                <th scope="col">City</th>
-                <th scope="col">Edit</th>
-            </tr>
+            <c:if test = "${trucksList!= null && trucksList.size() != 0}">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Registration number</th>
+                    <th scope="col">Working</th>
+                    <th scope="col">Work Shift</th>
+                    <th scope="col">Load weight</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Edit</th>
+                </tr>
+            </c:if>
             </thead>
             <tbody>
             <c:forEach items="${trucksList}" var="truck">

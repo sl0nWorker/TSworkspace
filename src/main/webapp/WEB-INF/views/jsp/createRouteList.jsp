@@ -32,15 +32,16 @@
 
     <h1 class="mt-5">Creating route list</h1>
     <form action="/createRouteList/deleteRoute" method="post" id="formDeleteRoute">
-
         <table class="table table-bordered">
             <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">City</th>
-                <th scope="col">Freight</th>
-                <th scope="col">Loading/Unloading</th>
-            </tr>
+            <c:if test = "${routeListList!= null && routeList.size() != 0}">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Freight</th>
+                    <th scope="col">Loading/Unloading</th>
+                </tr>
+            </c:if>
             </thead>
             <tbody>
             <c:forEach items="${routeList}" var="route" varStatus="routeListLoop">
@@ -134,8 +135,14 @@
         </table>
     </form>
 
-    <form action="/createRouteList/addRouteList" method="post" id="formAddRouteList">
-
+    <form action="/createRouteList/saveRouteList" method="post" id="formAddRouteList">
+        <c:if test = "${routeList != null && routeList.size() != 0}">
+        <div class="form-group">
+            <button type="submit" class="btn btn-dark btn-block" >
+                Save route list
+            </button>
+        </div>
+        </c:if>
     </form>
 
 
