@@ -1,11 +1,7 @@
 package com.inc.slon.controller;
 
-import com.inc.slon.model.Freight;
-import com.inc.slon.model.FreightStatus;
-import com.inc.slon.model.Order;
-import com.inc.slon.model.Route;
-import com.inc.slon.service.CityService;
-import com.inc.slon.service.FreightStatusService;
+import com.inc.slon.model.*;
+import com.inc.slon.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,6 +27,21 @@ public class CreateRouteListController {
 
     @Autowired
     FreightStatusService freightStatusService;
+
+    @Autowired
+    TruckService truckService;
+
+    @Autowired
+    TruckerService truckerService;
+
+    @Autowired
+    RouteService routeService;
+
+    @Autowired
+    OrderService orderService;
+
+    @Autowired
+    FreightService freightService;
 
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.GET)
     public String showCreateOrderPage(ModelMap map, HttpSession httpSession) {
@@ -79,7 +90,7 @@ public class CreateRouteListController {
         List<Route> routeList = (List<Route>) httpSession.getAttribute("routeList");
         log.info("/createRouteList,post getOrder");
 
-        if (routeList!= null && routeList.size() != 0) {
+        if (routeList != null && routeList.size() != 0) {
             log.info("/createRouteList,post getRouteList");
             log.info("route: " + routeList.get(0));
         }
@@ -142,17 +153,152 @@ public class CreateRouteListController {
         return new ModelAndView("redirect:/createRouteList");
     }
 
+    //TODO: add checks for changing status (someone else assigned truck or truckers)
     @RequestMapping(value = {"/createRouteList/saveRouteList"}, method = RequestMethod.POST)
     public ModelAndView saveRouteList(ModelMap map, HttpSession httpSession) {
-
         log.info("(/createRouteList/saveRouteList, post) start");
+        //type checks
+        List<Route> savedRouteList = (List<Route>) httpSession.getAttribute("routeList");
+        httpSession.setAttribute("savedRouteList", savedRouteList);
+
+
+        List<Truck> truckList = truckService.truckList();
+        List<Truck> freeTruckList = new ArrayList<>();
+        // Free trucks, orderId = null.
         // TODO: add checks
-        List<Route> savedRouteList = (List<Route>)httpSession.getAttribute("routeList");
-        httpSession.setAttribute("savedRouteList",savedRouteList);
-        map.addAttribute("savedRouteList",savedRouteList);
+        // working = true
+        // weight is ok, with loading/unloading
+        // not in another order
+        for (Truck truck : truckList) {
+            if (truck.getOrder() == null) {
+                freeTruckList.add(truck);
+            }
+        }
+        //change to map
+        httpSession.setAttribute("freeTruckList", freeTruckList);
+
         log.info("(/createRouteList/saveRouteList, post) end");
         return new ModelAndView("redirect:/createRouteList/saveRouteList");
     }
+
+    @RequestMapping(value = {"/createRouteList/saveRouteList/assignTruck"}, method = RequestMethod.POST)
+    public ModelAndView assignTruck(ModelMap map, HttpSession httpSession,
+                                    @RequestParam(value = "truckId") String truckId) {
+
+
+        log.info("(/createRouteList/saveRouteList/assignTruck, post) start");
+        // TODO: add checks
+
+        //assign the truck
+        if (httpSession.getAttribute("assignedTruckId") == null) {
+            if (truckId != null) {
+                httpSession.setAttribute("assignedTruckId", truckId);
+                Truck assignedTruck = truckService.findById(truckId);
+                httpSession.setAttribute("assignedTruck", assignedTruck);
+
+                //send appropriate truckerList
+                List<Trucker> truckerList = truckerService.truckerList();
+                // check time limit = 176 hours
+                // trucker is free
+                // same city as the assignedTruck
+                // check(truckerList)
+                List<Trucker> checkedTruckerList = truckerList;
+                httpSession.setAttribute("checkedTruckerList", checkedTruckerList);
+                //set savedTruckcerList  (for savedTruckerList.size = 0, in jsp check)
+                List<Trucker> savedTruckerList = new ArrayList<>();
+                httpSession.setAttribute("savedTruckerList", savedTruckerList);
+            }
+        }
+
+        log.info("(/createRouteList/saveRouteList/assignTruck, post) end");
+        return new ModelAndView("redirect:/createRouteList/saveRouteList");
+    }
+
+    @RequestMapping(value = {"/createRouteList/saveRouteList/assignTrucker"}, method = RequestMethod.POST)
+    public ModelAndView assignTrucker(ModelMap map, HttpSession httpSession,
+                                      @RequestParam(value = "truckId", required = false) Long truckId,
+                                      @RequestParam(value = "truckerId", required = false) Long truckerId) {
+
+
+        log.info("(/createRouteList/saveRouteList/assignTrucker, post) start");
+        // TODO: add checks
+
+        if (truckerId == null) {
+            log.error("(/createRouteList/saveRouteList/assignTrucker, post) truckId = null");
+            // throw exception
+        }
+
+        // add tpye checks
+        List<Trucker> savedTruckerList = (List<Trucker>) httpSession.getAttribute("savedTruckerList");
+        Trucker truckerAdd = truckerService.findById(truckerId);
+        savedTruckerList.add(truckerAdd);
+        httpSession.setAttribute("savedTruckerList", savedTruckerList);
+
+        //send appropriate truckerList
+
+        //add type checks
+        String assignedTruckId = (String) httpSession.getAttribute("assignedTruckId");
+        if (savedTruckerList.size() == 1) {
+            List<Trucker> truckerList = truckerService.truckerList();
+            // check time limit = 176 hours
+            // trucker is free
+            // same city as the assignedTruck
+            // check(truckerList)
+            // DELETE trucker with truckerId in checkedTruckerList
+            List<Trucker> checkedTruckerList = truckerList;
+            log.info("chekedTruckerList:" + checkedTruckerList + " size: " + checkedTruckerList.size());
+            httpSession.setAttribute("checkedTruckerList", checkedTruckerList);
+        }
+
+        log.info("(//createRouteList/saveRouteList/assignTrucker, post) end");
+        return new ModelAndView("redirect:/createRouteList/saveRouteList");
+    }
+
+    @RequestMapping(value = {"/createRouteList/saveRouteList/assignOrder"}, method = RequestMethod.POST)
+    public ModelAndView assignOrder(ModelMap map, HttpSession httpSession) {
+
+        log.info("(/createRouteList/saveRouteList/assignOrder, post) start");
+        Order order = new Order();
+        order.setReady(false);
+        Truck truck = (Truck) httpSession.getAttribute("assignedTruck");
+        order.setTruck(truck);
+        List<Route> routeList = (List<Route>) httpSession.getAttribute("savedRouteList");
+        order.setRouteList(routeList);
+        List<Trucker> truckerList = (List<Trucker>) httpSession.getAttribute("savedTruckerList");
+        order.setTruckerList(truckerList);
+        //pre persisting checks (status is still the same)
+        //for status truck, for status trucker.
+        Freight freightToPersist;
+        for (Route route : routeList) {
+            freightToPersist = route.getFreight();
+            freightService.add(freightToPersist);
+            routeService.add(route);
+        }
+        log.info("BEFORE ADDING ORDER");
+        orderService.add(order);
+        log.info("AFTER ADDING ORDER");
+
+        // TODO: clean httpSession
+        httpSession.setAttribute("routeList", null);
+        httpSession.setAttribute("savedRouteList", null);
+        httpSession.setAttribute("savedTruckerList", null);
+        httpSession.setAttribute("assignedTruck", null);
+        httpSession.setAttribute("assignedTruckId", null);
+        httpSession.setAttribute("checkedTruckerList", null);
+
+        List<Order> orderList = (List<Order>) httpSession.getAttribute("orderList");
+        if (orderList == null) {
+            orderList = new ArrayList<>();
+            orderList.add(order);
+        } else {
+            orderList.add(order);
+        }
+        httpSession.setAttribute("orderList", orderList);
+
+        log.info("(/createRouteList/saveRouteList/assignOrder, post) end");
+        return new ModelAndView("redirect:/activeOrders");
+    }
+
 
     @RequestMapping(value = {"/createRouteList/saveRouteList"}, method = RequestMethod.GET)
     public String showRouteList(ModelMap map, HttpSession httpSession) {

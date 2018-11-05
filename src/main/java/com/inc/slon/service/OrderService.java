@@ -1,7 +1,7 @@
-package com.inc.slon.dao;
+package com.inc.slon.service;
 
 import com.inc.slon.model.Order;
 
-public interface OrderDao {
+public interface OrderService {
     void add(Order order);
 }

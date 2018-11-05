@@ -1,7 +1,7 @@
-package com.inc.slon.dao;
+package com.inc.slon.service;
 
 import com.inc.slon.model.Route;
 
-public interface RouteDao {
+public interface RouteService {
     void add(Route route);
 }

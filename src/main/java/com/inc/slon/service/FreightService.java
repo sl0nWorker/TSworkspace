@@ -1,7 +1,7 @@
-package com.inc.slon.dao;
+package com.inc.slon.service;
 
 import com.inc.slon.model.Freight;
 
-public interface FreightDao {
+public interface FreightService {
     void add(Freight freight);
 }

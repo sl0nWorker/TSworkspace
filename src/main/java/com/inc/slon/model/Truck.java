@@ -26,6 +26,8 @@ public class Truck {
     @JoinColumn(name = "CITY_ID")
     private City city;
 
+    @OneToOne(mappedBy = "truck")
+    private Order order;
 
 
     public Truck(){
@@ -86,6 +88,10 @@ public class Truck {
     @Override
     public String toString(){
         //TODO: delete id (id for testing)
-        return regNumber + id;
+        return "regNumber: " + regNumber + ", id: " + id;
+    }
+
+    public Order getOrder() {
+        return order;
     }
 }

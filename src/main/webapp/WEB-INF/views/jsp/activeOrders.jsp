@@ -24,7 +24,7 @@
                 </div>
             </th>
         </tr>
-        <c:if test = "${orderList != null && orderList.size() != 0}">
+        <c:if test = "${sessionScope.orderList != null && sessionScope.orderList.size() != 0}">
         <tr>
             <th scope="col">Order number</th>
             <th scope="col">Ready</th>
@@ -35,7 +35,7 @@
         </c:if>
         </thead>
         <tbody>
-        <c:forEach items="${orderList}" var="order">
+        <c:forEach items="${sessionScope.orderList}" var="order">
             <tr>
                 <td>
                     <c:out value="${order.id}"/>
@@ -46,7 +46,7 @@
                 </td>
 
                 <td>
-                    <c:forEach items="${orderList.routeList}" var="route">
+                    <c:forEach items="${order.routeList}" var="route">
                         <c:out value="${route.city}"/>
                     </c:forEach>
                 </td>
@@ -56,8 +56,8 @@
                 </td>
 
                 <td>
-                    <c:forEach items="${orderList.truckerList}" var="trucker">
-                        <c:out value="${trucker.LastName}"/>
+                    <c:forEach items="${order.truckerList}" var="trucker">
+                        <c:out value="${trucker.lastName}"/>
                     </c:forEach>
                 </td>
             </tr>
