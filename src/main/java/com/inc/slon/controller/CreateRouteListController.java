@@ -5,6 +5,7 @@ import com.inc.slon.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -81,11 +82,12 @@ public class CreateRouteListController {
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.POST)
     public ModelAndView addRouteInOrder(ModelMap map, HttpSession httpSession,
                                         @RequestParam(value = "city") String cityId,
+                                        @RequestParam(value = "freightNumber") Integer freightNumber,
                                         @RequestParam(value = "freightName") String freightName,
                                         @RequestParam(value = "freightWeight") Integer freightWeight,
                                         @RequestParam(value = "loading") String loading) {
         log.info("/createRouteList, post) start");
-        //TODO: add checking that loading is ahead of unloading. If unloading , check existing way froma A to B
+        //TODO: add checking that loading is ahead of unloading. If unloading , check existing way from A to B
         // TODO: add type checks
         List<Route> routeList = (List<Route>) httpSession.getAttribute("routeList");
         log.info("/createRouteList,post getOrder");
@@ -100,6 +102,7 @@ public class CreateRouteListController {
         route.setCity(cityService.findById(cityId));
         //TODO: persist route after freight
         Freight freight = new Freight();
+        freight.setFreightNumber(freightNumber);
         freight.setName(freightName);
         freight.setWeight(freightWeight);
         log.info("Find freightStatus");
@@ -156,9 +159,67 @@ public class CreateRouteListController {
     //TODO: add checks for changing status (someone else assigned truck or truckers)
     @RequestMapping(value = {"/createRouteList/saveRouteList"}, method = RequestMethod.POST)
     public ModelAndView saveRouteList(ModelMap map, HttpSession httpSession) {
+        final String path = "(/createRouteList/saveRouteList, post) ";
         log.info("(/createRouteList/saveRouteList, post) start");
         //type checks
         List<Route> savedRouteList = (List<Route>) httpSession.getAttribute("routeList");
+
+
+        //checks for frieght and path
+
+
+        Integer freightNumber;
+        Integer comparedFreightNumber;
+        int countCheckPairNumbers;
+        String error = null;
+
+        try {
+            for (int i = 0; i < savedRouteList.size(); i++) {
+                freightNumber = savedRouteList.get(i).getFreight().getFreightNumber();
+                countCheckPairNumbers = 1;
+                for (int j = 0; j < savedRouteList.size(); j++) {
+                    //check for existing only two equals freightNumbers (load/unload)
+                    comparedFreightNumber = savedRouteList.get(j).getFreight().getFreightNumber();
+                    if (comparedFreightNumber == freightNumber && i != j) {
+                        if (!savedRouteList.get(i).getFreight().getName().equals(savedRouteList.get(j).getFreight().getName()) ||
+                                savedRouteList.get(i).getFreight().getWeight() != savedRouteList.get(j).getFreight().getWeight()) {
+                            error = "name or weight not the same in freight with number: " + freightNumber;
+                            throw new RuntimeException();
+                        }
+                        countCheckPairNumbers++;
+                        boolean iRouteStatus = savedRouteList.get(i).getUnloading();
+                        boolean jRouteStatus = savedRouteList.get(j).getUnloading();
+                        if (i < j) {
+                            if (iRouteStatus != false || jRouteStatus != true) {
+                                log.error("(/createRouteList/saveRouteList, post) not existing pair loading before unloading");
+                                error = "not in all pairs loading before unloading";
+                                throw new RuntimeException();
+                            }
+                        } else {
+                            if (iRouteStatus != true || jRouteStatus != false) {
+                                log.error("(/createRouteList/saveRouteList, post) not existing pair loading before unloading");
+                                error = "not in all pairs loading before unloading";
+                                throw new RuntimeException();
+                            }
+                        }
+                    }
+                }
+                if (countCheckPairNumbers != 2) {
+                    log.error("(/createRouteList/saveRouteList , post) freightPairNumber <2 or >2");
+                    error = "not all pairs complited";
+                    //throw exception
+                    throw new RuntimeException();
+                }
+            }
+        } catch (RuntimeException e) {
+            map.addAttribute("error", error);
+            return new ModelAndView("errorSaveRouteList", map);
+        }
+
+
+        //end checking for freight
+
+
         httpSession.setAttribute("savedRouteList", savedRouteList);
 
 
@@ -169,9 +230,34 @@ public class CreateRouteListController {
         // working = true
         // weight is ok, with loading/unloading
         // not in another order
+        int sum = 0;
+        int maxWeight = 0;
+
+        //loadWeight routes
+        for (Route route : savedRouteList) {
+            log.info(path + "route: " + route);
+            if (!route.getUnloading()) {
+                sum = sum + route.getFreight().getWeight();
+                log.info("(/createRouteList/saveRouteList , post) sum step on loading: " + sum);
+                if (sum > maxWeight) {
+                    maxWeight = sum;
+                    log.info(path + "new maxWeight: " + maxWeight);
+                }
+            } else {
+                sum = sum - route.getFreight().getWeight();
+                log.info("(/createRouteList/saveRouteList , post) sum step on unloading: " + sum);
+            }
+        }
+        if (sum != 0) {
+            log.error(path + "sum != 0");
+        }
+        // check truck loadWeight > maxWeight
         for (Truck truck : truckList) {
-            if (truck.getOrder() == null) {
+            if (truck.getOrder() == null && truck.getWorking() && truck.getLoadWeight() >= maxWeight) {
                 freeTruckList.add(truck);
+                log.info(path + "(true) truck loadWeight: " + truck.getLoadWeight() + " maxWeight: " + maxWeight);
+            } else {
+                log.info(path + "(false) Order: " + truck.getOrder() + " Working: " + truck.getWorking() + " loadWeight: " + truck.getLoadWeight() + " maxWeight: " + maxWeight);
             }
         }
         //change to map
@@ -185,7 +271,7 @@ public class CreateRouteListController {
     public ModelAndView assignTruck(ModelMap map, HttpSession httpSession,
                                     @RequestParam(value = "truckId") String truckId) {
 
-
+        final String path = "(/createRouteList/saveRouteList/assignTruck, post)";
         log.info("(/createRouteList/saveRouteList/assignTruck, post) start");
         // TODO: add checks
 
@@ -198,11 +284,16 @@ public class CreateRouteListController {
 
                 //send appropriate truckerList
                 List<Trucker> truckerList = truckerService.truckerList();
+                if(truckerList == null){
+                    //TODO: Repair that. Session will be corrupted
+                    log.info(path + " truckerList is empty, after assign truck");
+                }
                 // check time limit = 176 hours
                 // trucker is free
                 // same city as the assignedTruck
                 // check(truckerList)
                 List<Trucker> checkedTruckerList = truckerList;
+
                 httpSession.setAttribute("checkedTruckerList", checkedTruckerList);
                 //set savedTruckcerList  (for savedTruckerList.size = 0, in jsp check)
                 List<Trucker> savedTruckerList = new ArrayList<>();

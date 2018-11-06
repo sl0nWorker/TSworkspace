@@ -10,6 +10,8 @@ public class Freight {
     @Column(name = "ID", nullable = false)
     private Long id;
 
+    @Column
+    private Integer freightNumber;
 
     @Column(name = "NAME")
     private String name;
@@ -52,6 +54,14 @@ public class Freight {
     @Override
     public String toString(){
         //TODO: remove id, id for testing
-        return name + " m(kg): " + weight + " id: " + id;
+        return "number: " + freightNumber + ", name: " + name + " m(kg): " + weight + " id: " + id;
+    }
+
+    public Integer getFreightNumber() {
+        return freightNumber;
+    }
+
+    public void setFreightNumber(Integer freightNumber) {
+        this.freightNumber = freightNumber;
     }
 }
