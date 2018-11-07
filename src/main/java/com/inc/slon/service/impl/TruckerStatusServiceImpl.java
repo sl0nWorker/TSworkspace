@@ -32,4 +32,10 @@ public class TruckerStatusServiceImpl implements TruckerStatusService {
         return truckerStatusDao.findById(id);
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public TruckerStatus findByName(String status) {
+        return truckerStatusDao.findByName(status);
+    }
+
 }

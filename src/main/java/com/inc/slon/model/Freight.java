@@ -54,7 +54,7 @@ public class Freight {
     @Override
     public String toString(){
         //TODO: remove id, id for testing
-        return "number: " + freightNumber + ", name: " + name + " m(kg): " + weight + " id: " + id;
+        return "Freight number: " + freightNumber + " | Freight name: " + name + " | m(kg): " + weight + " | Freight status: " + freightStatus;
     }
 
     public Integer getFreightNumber() {

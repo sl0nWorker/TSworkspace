@@ -1,5 +1,8 @@
 package com.inc.slon.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,7 +17,9 @@ public class Order {
     @Column(name = "READY")
     private Boolean ready;
 
-    @OneToMany
+    //magic
+    @OneToMany(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     @JoinColumn(name = "ROUTES")
     private List<Route> routeList;
 
@@ -22,7 +27,8 @@ public class Order {
     @JoinColumn(name = "TRUCK_ID")
     private Truck truck;
 
-    @ManyToMany
+    //magic
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ORDER_TRUCKERS", joinColumns = @JoinColumn (name = "ORDER_ID"),
     inverseJoinColumns = @JoinColumn (name = "TRUCKER_ID"))
     private List<Trucker> truckerList;

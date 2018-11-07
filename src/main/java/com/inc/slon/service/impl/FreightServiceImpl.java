@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class FreightServiceImpl implements FreightService {
     @Autowired
@@ -16,5 +18,17 @@ public class FreightServiceImpl implements FreightService {
     @Override
     public void add(Freight freight) {
        freightDao.add(freight);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Freight> freightList() {
+        return freightDao.freightList();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Freight findByNumber(Integer freightNumber) {
+        return freightDao.findByNumber(freightNumber);
     }
 }

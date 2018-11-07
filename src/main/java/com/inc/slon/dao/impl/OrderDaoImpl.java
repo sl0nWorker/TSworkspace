@@ -15,4 +15,12 @@ public class OrderDaoImpl implements OrderDao {
     public void add(Order order) {
         entityManager.persist(order);
     }
+
+    @Override
+    public Order findByTruckId(Long truckId) {
+        return entityManager.createQuery(
+                "SELECT s FROM Order s WHERE s.truck.id = :truckId", Order.class)
+                .setParameter("truckId", truckId)
+                .getSingleResult();
+    }
 }

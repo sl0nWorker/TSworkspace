@@ -17,4 +17,10 @@ public class OrderServiceImpl implements OrderService {
     public void add(Order order) {
         orderDao.add(order);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Order findByTruckId(Long truckId) {
+        return orderDao.findByTruckId(truckId);
+    }
 }

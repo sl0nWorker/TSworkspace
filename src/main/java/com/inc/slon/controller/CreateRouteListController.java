@@ -14,7 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 public class CreateRouteListController {
@@ -43,6 +45,9 @@ public class CreateRouteListController {
 
     @Autowired
     FreightService freightService;
+
+    @Autowired
+    TruckerStatusService truckerStatusService;
 
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.GET)
     public String showCreateOrderPage(ModelMap map, HttpSession httpSession) {
@@ -109,7 +114,6 @@ public class CreateRouteListController {
         log.info("List status: " + freightStatusService.statusList());
         log.info("FINDBYSTATUSNAME: " + freightStatusService.findByStatusName("Prepared"));
         freight.setFreightStatus(freightStatusService.findByStatusName("Prepared"));
-        log.info("ERROR here");
         route.setFreight(freight);
 
         if (loading.equals("Loading")) {
@@ -347,24 +351,48 @@ public class CreateRouteListController {
 
     @RequestMapping(value = {"/createRouteList/saveRouteList/assignOrder"}, method = RequestMethod.POST)
     public ModelAndView assignOrder(ModelMap map, HttpSession httpSession) {
+        final String path = "(/createRouteList/saveRouteList/assignOrder , post) ";
 
         log.info("(/createRouteList/saveRouteList/assignOrder, post) start");
         Order order = new Order();
         order.setReady(false);
         Truck truck = (Truck) httpSession.getAttribute("assignedTruck");
         order.setTruck(truck);
+
+
+
         List<Route> routeList = (List<Route>) httpSession.getAttribute("savedRouteList");
         order.setRouteList(routeList);
         List<Trucker> truckerList = (List<Trucker>) httpSession.getAttribute("savedTruckerList");
         order.setTruckerList(truckerList);
+
+        // assign truck to truckers and change truckers status (NOT FREE)
+        for (Trucker trucker:truckerList) {
+            trucker.setTruck(truck);
+            trucker.setStatus(truckerStatusService.findByName("WORK"));
+            truckerService.update(trucker);
+        }
+
+
         //pre persisting checks (status is still the same)
         //for status truck, for status trucker.
         Freight freightToPersist;
+        Set<Integer> freightNumberSet = new HashSet<>();
         for (Route route : routeList) {
             freightToPersist = route.getFreight();
-            freightService.add(freightToPersist);
+            log.info(path + route.getFreight());
+            if (!freightNumberSet.contains(freightToPersist.getFreightNumber())){
+                log.info(path + "not contains, adding " + freightToPersist);
+                freightNumberSet.add(freightToPersist.getFreightNumber());
+                freightService.add(freightToPersist);
+            } else{
+                log.info(path + "already contains, not adding" + freightToPersist);
+                route.setFreight(freightService.findByNumber(route.getFreight().getFreightNumber()));
+            }
             routeService.add(route);
         }
+
+
         log.info("BEFORE ADDING ORDER");
         orderService.add(order);
         log.info("AFTER ADDING ORDER");

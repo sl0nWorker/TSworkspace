@@ -4,4 +4,6 @@ import com.inc.slon.model.Order;
 
 public interface OrderService {
     void add(Order order);
+
+    Order findByTruckId(Long truckId);
 }

@@ -10,4 +10,6 @@ public interface TruckerStatusDao {
     void add(TruckerStatus truckerStatus);
 
     TruckerStatus findById(String id);
+
+    TruckerStatus findByName(String status);
 }

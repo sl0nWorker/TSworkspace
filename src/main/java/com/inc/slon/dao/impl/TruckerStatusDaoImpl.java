@@ -32,4 +32,12 @@ public class TruckerStatusDaoImpl implements TruckerStatusDao {
     public TruckerStatus findById(String id) {
         return entityManager.find(TruckerStatus.class,Long.valueOf(id));
     }
+
+    @Override
+    public TruckerStatus findByName(String status) {
+        return entityManager.createQuery(
+                "SELECT s FROM TruckerStatus s WHERE s.status = :statusName",TruckerStatus.class)
+                .setParameter("statusName", status)
+                .getSingleResult();
+    }
 }

@@ -35,7 +35,7 @@
     <form action="/createRouteList/deleteRoute" method="post" id="formDeleteRoute">
         <table class="table table-bordered">
             <thead>
-            <c:if test="${routeListList!= null && routeList.size() != 0}">
+            <c:if test="${routeList!= null && routeList.size() != 0}">
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">City</th>
