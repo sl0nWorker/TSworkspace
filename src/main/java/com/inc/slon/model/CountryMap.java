@@ -21,6 +21,14 @@ public class CountryMap {
     @Column(name = "DISTANCE")
     private int distance;
 
+    public CountryMap(){}
+
+    public CountryMap(City cityFrom, City cityTo, int distance){
+        this.cityFrom = cityFrom;
+        this.cityTo = cityTo;
+        this.distance = distance;
+    }
+
     public Long getId() {
         return id;
     }

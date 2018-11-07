@@ -24,15 +24,18 @@ public class CountyMapDaoImpl implements CountryMapDao {
     }
 
     @Override
-    public CountryMap getCountryMap() {
+    public List<CountryMap> countryMapList() {
         CriteriaQuery<CountryMap> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(CountryMap.class);
         @SuppressWarnings("unused")
         Root<CountryMap> root = criteriaQuery.from(CountryMap.class);
-        List<CountryMap> countryMapList = entityManager.createQuery(criteriaQuery).getResultList();
-        if (countryMapList.size() != 0) {
-            return countryMapList.get(0);
-        } else {
-            return null;
-        }
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public int distance(City cityFrom, City cityTo) {
+        return entityManager.createQuery(
+                "SELECT s FROM CountryMap s WHERE s.cityFrom= :cityFrom AND s.cityTo=:cityTo",CountryMap.class)
+                .setParameter("cityFrom", cityFrom).setParameter("cityTo",cityTo)
+                .getSingleResult().getDistance();
     }
 }

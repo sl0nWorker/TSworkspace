@@ -49,6 +49,9 @@ public class CreateRouteListController {
     @Autowired
     TruckerStatusService truckerStatusService;
 
+    @Autowired
+    CountryMapService countryMapService;
+
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.GET)
     public String showCreateOrderPage(ModelMap map, HttpSession httpSession) {
         log.info("/createRouteList, get) start");
@@ -279,6 +282,7 @@ public class CreateRouteListController {
         log.info("(/createRouteList/saveRouteList/assignTruck, post) start");
         // TODO: add checks
 
+        List<Route> savedRouteList = (List<Route>) httpSession.getAttribute("savedRouteList");
         //assign the truck
         if (httpSession.getAttribute("assignedTruckId") == null) {
             if (truckId != null) {
@@ -287,16 +291,23 @@ public class CreateRouteListController {
                 httpSession.setAttribute("assignedTruck", assignedTruck);
 
                 //send appropriate truckerList
+                List<Trucker> checkedTruckerList = new ArrayList<>();
                 List<Trucker> truckerList = truckerService.truckerList();
                 if(truckerList == null){
                     //TODO: Repair that. Session will be corrupted
                     log.info(path + " truckerList is empty, after assign truck");
+                } else{
+                    // check time limit = 176 hours
+                    // trucker is free
+                    // same city as the assignedTruck
+                    for (Trucker trucker: truckerList) {
+                        if (trucker.getCity().getId() == assignedTruck.getCity().getId()
+                                && trucker.getStatus().getStatus().equals("FREE")
+                                && (176 - trucker.getWorkHours()) > countryMapService.timeForRouteList(savedRouteList)){
+                            checkedTruckerList.add(trucker);
+                        }
+                    }
                 }
-                // check time limit = 176 hours
-                // trucker is free
-                // same city as the assignedTruck
-                // check(truckerList)
-                List<Trucker> checkedTruckerList = truckerList;
 
                 httpSession.setAttribute("checkedTruckerList", checkedTruckerList);
                 //set savedTruckcerList  (for savedTruckerList.size = 0, in jsp check)
@@ -331,16 +342,25 @@ public class CreateRouteListController {
 
         //send appropriate truckerList
 
+        Truck assignedTruck = (Truck) httpSession.getAttribute("assignedTruck");
+        List<Route> savedRouteList= (List<Route>) httpSession.getAttribute("savedRouteList");
         //add type checks
         String assignedTruckId = (String) httpSession.getAttribute("assignedTruckId");
         if (savedTruckerList.size() == 1) {
             List<Trucker> truckerList = truckerService.truckerList();
+            List<Trucker> checkedTruckerList = new ArrayList<>();
             // check time limit = 176 hours
             // trucker is free
             // same city as the assignedTruck
-            // check(truckerList)
             // DELETE trucker with truckerId in checkedTruckerList
-            List<Trucker> checkedTruckerList = truckerList;
+            for (Trucker trucker: truckerList) {
+                if (trucker.getCity().getId() == assignedTruck.getCity().getId()
+                        && trucker.getStatus().getStatus().equals("FREE")
+                        && (176 - trucker.getWorkHours()) > countryMapService.timeForRouteList(savedRouteList)
+                        && trucker.getId() != truckerAdd.getId()){
+                    checkedTruckerList.add(trucker);
+                }
+            }
             log.info("chekedTruckerList:" + checkedTruckerList + " size: " + checkedTruckerList.size());
             httpSession.setAttribute("checkedTruckerList", checkedTruckerList);
         }

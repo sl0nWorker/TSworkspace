@@ -12,9 +12,11 @@
 
     <h1 class="mt-5">Freight status</h1>
     <div class="list-group">
-        <c:forEach items="${freightList}" var="freight">
-            <c:out value="${freight}"/>
-        </c:forEach>
+        <ul class="list-group">
+            <c:forEach items="${freightList}" var="freight">
+             <li class="list-group-item list-group-item-light"><c:out value="${freight}"/></li>
+            </c:forEach>
+        </ul>
     </div>
 </main>
 <jsp:include page="templates/footer.jsp"/>

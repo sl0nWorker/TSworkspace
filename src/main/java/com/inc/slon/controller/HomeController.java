@@ -25,23 +25,25 @@ public class HomeController {
     private TruckerStatusService truckerStatusService;
     @Autowired
     private CityService cityService;
+    @Autowired
+    private CountryMapService countryMapService;
 
     private static final String INDEX_PAGE = "home/home";
     private static final String TEST_PAGE = "TestJsp";
     @Autowired
     private Logger log;
 
-    @RequestMapping(value = {"/","/home"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/", "/home"}, method = RequestMethod.GET)
     public String showIndexPage(ModelMap map) {
         log.info("(/home, get) start");
 
         //TODO: remove it (Adding 3 default status for testing)
-        if(truckerStatusService.truckerStatusList().size() == 0){
+        if (truckerStatusService.truckerStatusList().size() == 0) {
             TruckerStatus truckerStatusFree = new TruckerStatus();
             truckerStatusFree.setStatus("FREE");
             TruckerStatus truckerStatusWork = new TruckerStatus();
             truckerStatusWork.setStatus("WORK");
-            TruckerStatus truckerStatusWheel= new TruckerStatus();
+            TruckerStatus truckerStatusWheel = new TruckerStatus();
             truckerStatusWheel.setStatus("WHEEL");
             truckerStatusService.add(truckerStatusFree);
             truckerStatusService.add(truckerStatusWork);
@@ -60,15 +62,34 @@ public class HomeController {
             cityService.add(spb);
             cityService.add(msc);
             cityService.add(novgorod);
+            //TODO: remove it (Adding  default countryMap for testing)
+            if (countryMapService.countryMapList() == null || countryMapService.countryMapList().size() == 0) {
+                CountryMap spbMsc = new CountryMap(spb, msc, 710);
+                CountryMap spbNovogorod = new CountryMap(spb, novgorod, 1127);
+                CountryMap mscSpb = new CountryMap(msc, spb, 710);
+                CountryMap mscNovgorod = new CountryMap(msc, novgorod, 417);
+                CountryMap novgorodSpb = new CountryMap(novgorod, spb, 1127);
+                CountryMap novgorodMsc = new CountryMap(novgorod, msc, 417);
+                countryMapService.add(spbMsc);
+                countryMapService.add(spbNovogorod);
+                countryMapService.add(mscSpb);
+                countryMapService.add(mscNovgorod);
+                countryMapService.add(novgorodSpb);
+                countryMapService.add(novgorodMsc);
+            }
         }
+
+
+        //TODO: remove it (Adding 3 default cities for testing)
+
 
         log.info("(/home, get) end, return INDEX_PAGE");
         return INDEX_PAGE;
     }
 
     @RequestMapping(value = "/Test", method = RequestMethod.GET)
-    public String showTestPage(){
-            return TEST_PAGE;
+    public String showTestPage() {
+        return TEST_PAGE;
     }
 
 }
