@@ -30,9 +30,9 @@
 
                     <div class="form-group">
                         <label for="inputPersonalNubmer">Personal number</label>
-                        <%-- TODO: fix pattern to {15}, (1-15) for testing --%>
-                        <input type="text" name="personalNumber" pattern="[0-9]{1,15}"
-                               placeholder="15 digits: 112233445567890" required class="form-control"
+                        <%-- TODO: fix pattern to {9}, (1-9) for testing --%>
+                        <input type="text" name="personalNumber" pattern="[0-9]{1,9}"
+                               placeholder="9 digits: 123456789" required class="form-control"
                                id="inputPersonalNubmer">
                     </div>
 

@@ -1,13 +1,7 @@
 package com.inc.slon.controller;
 
-import com.inc.slon.model.City;
-import com.inc.slon.model.CountryMap;
-import com.inc.slon.model.Truck;
-import com.inc.slon.model.TruckerStatus;
-import com.inc.slon.service.CityService;
-import com.inc.slon.service.CountryMapService;
-import com.inc.slon.service.TruckService;
-import com.inc.slon.service.TruckerStatusService;
+import com.inc.slon.model.*;
+import com.inc.slon.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @Controller
 public class HomeController {
@@ -27,6 +23,8 @@ public class HomeController {
     private CityService cityService;
     @Autowired
     private CountryMapService countryMapService;
+    @Autowired
+    private TruckerHistoryShiftService truckerHistoryShiftService;
 
     private static final String INDEX_PAGE = "home/home";
     private static final String TEST_PAGE = "TestJsp";
@@ -48,6 +46,28 @@ public class HomeController {
             truckerStatusService.add(truckerStatusFree);
             truckerStatusService.add(truckerStatusWork);
             truckerStatusService.add(truckerStatusWheel);
+
+            /*
+            //TODO: remove it (test TruckerShiftStatus)
+            GregorianCalendar firstDate = new GregorianCalendar();
+            TruckerHistoryShift kurishevStart = new TruckerHistoryShift(1L,"oleg",
+                    "kurishev",2255,"StartShift", firstDate);
+            truckerHistoryShiftService.add(kurishevStart);
+            log.info("/home, get add first date: " + kurishevStart.getShiftStatusTime());
+
+            GregorianCalendar secondDate = new GregorianCalendar();
+            TruckerHistoryShift kurishevStart2 = new TruckerHistoryShift(1L,"oleg2",
+                    "kurishev2",2255,"StartShift",secondDate);
+            truckerHistoryShiftService.add(kurishevStart2);
+            log.info("/home, get add second date: "+ kurishevStart2.getShiftStatusTime());
+
+            if (secondDate.after(firstDate)){
+                log.info("calendar.after works fine");
+            }
+
+            TruckerHistoryShift last = truckerHistoryShiftService.lastTruckerHistoryShiftByTruckerId(1L);
+            log.info("/home, get last date: " + last.getFirstName() + last.getLastName());
+            */
         }
 
         //TODO: remove it (Adding 3 default cities for testing)
@@ -80,7 +100,7 @@ public class HomeController {
         }
 
 
-        //TODO: remove it (Adding 3 default cities for testing)
+
 
 
         log.info("(/home, get) end, return INDEX_PAGE");
