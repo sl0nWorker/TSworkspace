@@ -17,4 +17,16 @@ public class RouteServiceImpl implements RouteService {
     public void add(Route route) {
         routeDao.add(route);
     }
+
+    @Transactional
+    @Override
+    public void update(Route route) {
+        routeDao.update(route);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Route findById(Long id) {
+        return routeDao.findById(id);
+    }
 }

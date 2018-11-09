@@ -21,6 +21,9 @@ public class Route {
     @Column(name ="TYPE")
     private Boolean unloading;
 
+    @Column(name = "COMPLETE")
+    private Boolean complete;
+
     public Long getId() {
         return id;
     }
@@ -51,6 +54,14 @@ public class Route {
 
     @Override
     public String toString(){
-        return "id: " + id + " freight: " + freight + " unloading: " + unloading;
+        return  freight + " | unloading: " + unloading;
+    }
+
+    public Boolean getComplete() {
+        return complete;
+    }
+
+    public void setComplete(Boolean complete) {
+        this.complete = complete;
     }
 }

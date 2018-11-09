@@ -20,10 +20,22 @@ public class FreightServiceImpl implements FreightService {
        freightDao.add(freight);
     }
 
+    @Transactional
+    @Override
+    public void update(Freight freight) {
+        freightDao.update(freight);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<Freight> freightList() {
         return freightDao.freightList();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Freight findById(Long id) {
+        return freightDao.findById(id);
     }
 
     @Transactional(readOnly = true)

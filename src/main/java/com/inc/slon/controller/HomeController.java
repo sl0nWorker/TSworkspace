@@ -46,28 +46,6 @@ public class HomeController {
             truckerStatusService.add(truckerStatusFree);
             truckerStatusService.add(truckerStatusWork);
             truckerStatusService.add(truckerStatusWheel);
-
-            /*
-            //TODO: remove it (test TruckerShiftStatus)
-            GregorianCalendar firstDate = new GregorianCalendar();
-            TruckerHistoryShift kurishevStart = new TruckerHistoryShift(1L,"oleg",
-                    "kurishev",2255,"StartShift", firstDate);
-            truckerHistoryShiftService.add(kurishevStart);
-            log.info("/home, get add first date: " + kurishevStart.getShiftStatusTime());
-
-            GregorianCalendar secondDate = new GregorianCalendar();
-            TruckerHistoryShift kurishevStart2 = new TruckerHistoryShift(1L,"oleg2",
-                    "kurishev2",2255,"StartShift",secondDate);
-            truckerHistoryShiftService.add(kurishevStart2);
-            log.info("/home, get add second date: "+ kurishevStart2.getShiftStatusTime());
-
-            if (secondDate.after(firstDate)){
-                log.info("calendar.after works fine");
-            }
-
-            TruckerHistoryShift last = truckerHistoryShiftService.lastTruckerHistoryShiftByTruckerId(1L);
-            log.info("/home, get last date: " + last.getFirstName() + last.getLastName());
-            */
         }
 
         //TODO: remove it (Adding 3 default cities for testing)

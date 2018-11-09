@@ -16,4 +16,16 @@ public class RouteDaoImpl implements RouteDao {
     public void add(Route route) {
         entityManager.persist(route);
     }
+
+    @Override
+    public void update(Route route) {
+        entityManager.merge(route);
+    }
+
+    @Override
+    public Route findById(Long id) {
+        return entityManager.find(Route.class,id);
+    }
+
+
 }

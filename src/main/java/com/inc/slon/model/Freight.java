@@ -55,7 +55,7 @@ public class Freight {
     public String toString(){
         //TODO: remove id, id for testing
         return "Freight number: " + freightNumber + " | Freight name: " + name + " | m(kg): " + weight + " | Freight status: " + freightStatus;
-    }
+       }
 
     public Integer getFreightNumber() {
         return freightNumber;

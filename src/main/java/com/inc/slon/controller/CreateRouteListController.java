@@ -55,7 +55,7 @@ public class CreateRouteListController {
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.GET)
     public String showCreateOrderPage(ModelMap map, HttpSession httpSession) {
         log.info("/createRouteList, get) start");
-        // TODO: add statuse for testing
+        // TODO: remove this, status for testing
         List<FreightStatus> freightStatusList = freightStatusService.statusList();
         log.info("freightStatusList: " + freightStatusList);
         if (freightStatusList.size() == 0) {
@@ -301,7 +301,8 @@ public class CreateRouteListController {
                     // trucker is free
                     // same city as the assignedTruck
                     for (Trucker trucker: truckerList) {
-                        if (trucker.getCity().getId() == assignedTruck.getCity().getId()
+                        //first check for not in another order
+                        if (trucker.getTruck() == null && trucker.getCity().getId() == assignedTruck.getCity().getId()
                                 && trucker.getStatus().getStatus().equals("FREE")
                                 && (176 - trucker.getWorkHours()) > countryMapService.timeForRouteList(savedRouteList)){
                             checkedTruckerList.add(trucker);

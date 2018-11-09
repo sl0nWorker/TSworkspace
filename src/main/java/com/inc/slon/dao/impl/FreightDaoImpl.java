@@ -21,11 +21,21 @@ public class FreightDaoImpl implements FreightDao {
     }
 
     @Override
+    public void update(Freight freight) {
+        entityManager.merge(freight);
+    }
+
+    @Override
     public List<Freight> freightList() {
         CriteriaQuery<Freight> criteriaQuery = entityManager.getCriteriaBuilder().createQuery(Freight.class);
         @SuppressWarnings("unused")
         Root<Freight> root = criteriaQuery.from(Freight.class);
         return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public Freight findById(Long id) {
+        return entityManager.find(Freight.class,id);
     }
 
     @Override

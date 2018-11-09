@@ -1,23 +1,16 @@
 package com.inc.slon.controller;
 
-import com.inc.slon.model.Order;
-import com.inc.slon.model.Route;
-import com.inc.slon.model.Trucker;
-import com.inc.slon.model.TruckerHistoryShift;
-import com.inc.slon.service.OrderService;
-import com.inc.slon.service.TruckerHistoryShiftService;
-import com.inc.slon.service.TruckerService;
+import com.inc.slon.model.*;
+import com.inc.slon.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -33,6 +26,14 @@ public class TruckerUiController {
     private OrderService orderService;
     @Autowired
     private TruckerHistoryShiftService truckerHistoryShiftService;
+    @Autowired
+    private TruckerStatusService truckerStatusService;
+    @Autowired
+    private RouteService routeService;
+    @Autowired
+    private FreightService freightService;
+    @Autowired
+    private FreightStatusService freightStatusService;
 
     @RequestMapping(value = {"/truckerUi"}, method = RequestMethod.GET)
     public String showTruckerList(ModelMap map) {
@@ -125,4 +126,68 @@ public class TruckerUiController {
         return modelAndView;
     }
 
+    @RequestMapping(value = {"/truckerUi/trucker/changeStatus"}, method = {RequestMethod.POST , RequestMethod.GET})
+    public ModelAndView changeTruckerStatus(ModelMap map,
+                                            @RequestParam(value = "truckerId") Long truckerId,
+                                            @RequestParam(value = "changeStatus") String changeStatus) {
+        final String path = "(/truckerUi/trucker/changeStatus, post) ";
+        log.info(path + "start");
+
+        Trucker updateTrucker = truckerService.findById(truckerId);
+        TruckerStatus truckerStatus = truckerStatusService.findByName(changeStatus);
+        if (truckerStatus != null){
+            updateTrucker.setStatus(truckerStatus);
+        }else{
+            log.error(path + "truckerStatus == null");
+        }
+        truckerService.update(updateTrucker);
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/truckerUi/trucker");
+        modelAndView.addObject("truckerId",truckerId);
+        log.info(path + "end");
+        return modelAndView;
+    }
+    @RequestMapping(value = {"/truckerUi/trucker/changeFreightStatus"}, method = RequestMethod.POST )
+    public ModelAndView changeFreightStatus(ModelMap map,
+                                            @RequestParam(value ="routeId") Long routeId,
+                                            @RequestParam(value = "freightId") Long freightId,
+                                            @RequestParam(value = "unloading") Boolean unloading,
+                                            @RequestParam(value = "truckerId") Long truckerId) {
+        final String path = "(/truckerUi/trucker/changeFreightStatus, post) ";
+        String error;
+        log.info(path + "start");
+        Freight updateFreight = freightService.findById(freightId);
+        Route updateRoute = routeService.findById(routeId);
+        if (unloading == false ){
+            if (updateFreight.getFreightStatus().getStatus().equals("Prepared")){
+                updateFreight.setFreightStatus(freightStatusService.findByStatusName("Shipped"));
+                freightService.update(updateFreight);
+                updateRoute.setComplete(true);
+                routeService.update(updateRoute);
+            } else {
+                error = "unloading == false, but status != prepared";
+                log.error(path + "unloading == false, but status != prepared");
+                map.addAttribute("error",error);
+                return new ModelAndView("errorGeneral");
+            }
+        } else{
+            if (updateFreight.getFreightStatus().getStatus().equals("Shipped")){
+                updateFreight.setFreightStatus(freightStatusService.findByStatusName("Delivered"));
+                freightService.update(updateFreight);
+                updateRoute.setComplete(true);
+                routeService.update(updateRoute);
+            } else{
+                error = "unloading == true, but status != shipped";
+                log.error(path + "unloading == true, but status != shipped");
+                map.addAttribute("error",error);
+                return new ModelAndView("errorGeneral");
+            }
+        }
+
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/truckerUi/trucker");
+        modelAndView.addObject("truckerId",truckerId);
+        log.info(path + "end");
+        return modelAndView;
+    }
 }

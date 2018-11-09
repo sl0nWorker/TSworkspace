@@ -104,8 +104,8 @@
                     <div class="form-group">
                         <label for="inputFreightNumber">Freight number</label>
                         <%-- TODO: add regexp for number --%>
-                        <input type="text" name="freightNumber" required pattern="[0-9]{1,25}"
-                               placeholder="max length 25 (only digits): 9102" class="form-control"
+                        <input type="text" name="freightNumber" required pattern="[0-9]{1,9}"
+                               placeholder="max length 9 (only digits): 9102" class="form-control"
                                id="inputFreightNumber">
                     </div>
                     <%-- TODO: use selected list, create list of freight names--%>
