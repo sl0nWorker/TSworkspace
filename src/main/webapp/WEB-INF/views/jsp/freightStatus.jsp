@@ -14,7 +14,7 @@
     <div class="list-group">
         <ul class="list-group">
             <c:forEach items="${freightList}" var="freight">
-             <li class="list-group-item list-group-item-light"><c:out value="${freight}"/></li>
+             <li class="list-group-item"><c:out value="${freight}"/></li>
             </c:forEach>
         </ul>
     </div>

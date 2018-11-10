@@ -18,9 +18,27 @@ public class OrderServiceImpl implements OrderService {
         orderDao.add(order);
     }
 
+    @Transactional
+    @Override
+    public void removeById(Long id) {
+        orderDao.removeById(id);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public Order findByTruckId(Long truckId) {
         return orderDao.findByTruckId(truckId);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Order findById(Long id) {
+        return orderDao.findById(id);
+    }
+
+    @Transactional
+    @Override
+    public void update(Order order) {
+        orderDao.update(order);
     }
 }

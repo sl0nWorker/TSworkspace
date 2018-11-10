@@ -22,6 +22,10 @@
             </li>
 
             <li class="nav-item">
+                <a class="nav-link" href="/archiveOrders">Archive orders</a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="/freightStatus">Freight status</a>
             </li>
         </ul>

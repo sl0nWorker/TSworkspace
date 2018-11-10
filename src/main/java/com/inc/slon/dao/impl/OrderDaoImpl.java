@@ -17,10 +17,25 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public void removeById(Long id) {
+        entityManager.remove(entityManager.find(Order.class,id));
+    }
+
+    @Override
     public Order findByTruckId(Long truckId) {
         return entityManager.createQuery(
                 "SELECT s FROM Order s WHERE s.truck.id = :truckId", Order.class)
                 .setParameter("truckId", truckId)
                 .getSingleResult();
+    }
+
+    @Override
+    public Order findById(Long id) {
+        return entityManager.find(Order.class, id);
+    }
+
+    @Override
+    public void update(Order order) {
+        entityManager.merge(order);
     }
 }

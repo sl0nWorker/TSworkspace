@@ -22,7 +22,7 @@ public class Route {
     private Boolean unloading;
 
     @Column(name = "COMPLETE")
-    private Boolean complete;
+    private Boolean complete = false;
 
     public Long getId() {
         return id;
@@ -54,7 +54,7 @@ public class Route {
 
     @Override
     public String toString(){
-        return  freight + " | unloading: " + unloading;
+        return  "City: " + city + " | " + freight + " | unloading: " + unloading;
     }
 
     public Boolean getComplete() {

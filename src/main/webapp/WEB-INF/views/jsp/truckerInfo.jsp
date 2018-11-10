@@ -109,7 +109,7 @@
                                 </div>
                                 <c:if test="${ empty route.complete or route.complete != true}">
                                     <div class="p-2">
-                                        <button style="border:#062c33" type="submit" class="btn btn-warning">
+                                        <button type="submit" class="btn btn-warning">
                                             complite
                                         </button>
                                     </div>
@@ -118,6 +118,19 @@
                     </form>
                     </li>
                 </c:forEach>
+                <c:if test="${not empty orderReady}">
+                    <form action="/truckerUi/trucker/completeOrder" method="post">
+                        <div class="form-group" style="display: none;">
+                            <input type="text" value="${trucker.truck.order.id}" name="orderId">
+                        </div>
+                        <div class="form-group" style="display: none;">
+                            <input type="text" value="${truckerId}" name="truckerId">
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-block">
+                            Complete order
+                        </button>
+                    </form>
+                </c:if>
             </c:if>
         </ul>
     </div>

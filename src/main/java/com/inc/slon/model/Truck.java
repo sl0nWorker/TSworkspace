@@ -87,8 +87,7 @@ public class Truck {
 
     @Override
     public String toString(){
-        //TODO: delete id (id for testing)
-        return "regNumber: " + regNumber + ", id: " + id;
+        return "regNumber: " + regNumber;
     }
 
     public Order getOrder() {

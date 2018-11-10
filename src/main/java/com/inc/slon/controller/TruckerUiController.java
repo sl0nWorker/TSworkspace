@@ -2,6 +2,7 @@ package com.inc.slon.controller;
 
 import com.inc.slon.model.*;
 import com.inc.slon.service.*;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -34,6 +36,8 @@ public class TruckerUiController {
     private FreightService freightService;
     @Autowired
     private FreightStatusService freightStatusService;
+    @Autowired
+    private ArchiveOrderService archiveOrderService;
 
     @RequestMapping(value = {"/truckerUi"}, method = RequestMethod.GET)
     public String showTruckerList(ModelMap map) {
@@ -58,9 +62,9 @@ public class TruckerUiController {
 
 
         Long truckId = null;
-        if (trucker.getTruck() != null) {
+        if (trucker.getTruck() != null && trucker.getTruck().getOrder() != null) {
             truckId = trucker.getTruck().getId();
-            // add cotrucker in map
+            // add cotrucker in mapx1x1
             Order order = orderService.findByTruckId(truckId);
             if (order != null) {
                 List<Trucker> truckerList = order.getTruckerList();
@@ -71,6 +75,17 @@ public class TruckerUiController {
                 }
                 // add routeList
                 List<Route> routeList = order.getRouteList();
+                //check for ordrerReady
+                boolean complete = true;
+                for (Route route: routeList) {
+                    if (!route.getComplete()){
+                        complete = false;
+                        break;
+                    }
+                }
+                if (complete){
+                    map.addAttribute("orderReady", true);
+                }
                 map.addAttribute("routeList", routeList);
             }
         }
@@ -184,6 +199,47 @@ public class TruckerUiController {
             }
         }
 
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/truckerUi/trucker");
+        modelAndView.addObject("truckerId",truckerId);
+        log.info(path + "end");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = {"/truckerUi/trucker/completeOrder"}, method = RequestMethod.POST)
+    public ModelAndView completeOrder(ModelMap map,
+                                      @RequestParam(value = "truckerId") Long truckerId,
+                                      @RequestParam(value = "orderId") Long orderId, HttpSession httpSession) {
+        final String path = "(/truckerUi/trucker/completeOrder, post) ";
+        log.info(path + "start");
+
+        Order order = orderService.findById(orderId);
+        List<Trucker> truckerList = order.getTruckerList();
+        for (Trucker trucker: truckerList) {
+            trucker.setTruck(null);
+            truckerService.update(trucker);
+        }
+        //remove in session orderList
+        boolean remove = false;
+        int idx = 0;
+        List<Order> orderList = (List<Order>) httpSession.getAttribute("orderList");
+        for (int i = 0; i < orderList.size(); i++) {
+            if (orderList.get(i).getId() == orderId){
+                idx = i;
+                remove = true;
+                break;
+            }
+        }
+        orderList.remove(idx);
+
+        //add order to archive
+        ArchiveOrder archiveOrder = new ArchiveOrder(order);
+        archiveOrderService.add(archiveOrder);
+
+        orderService.removeById(orderId);
+
+        log.info(path + "remove in session orderlist " + remove);
+        httpSession.setAttribute("orderList",orderList);
 
         ModelAndView modelAndView = new ModelAndView("redirect:/truckerUi/trucker");
         modelAndView.addObject("truckerId",truckerId);
