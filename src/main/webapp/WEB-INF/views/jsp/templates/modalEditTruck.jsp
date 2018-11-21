@@ -27,8 +27,8 @@
 
                     <div class="form-group">
                         <label for="inputWorkShift">Work shift</label>
-                        <input type="text" name="workShift" pattern="[1-2]{1}[0-9]{1}"
-                               placeholder="2 digits (24 hours format): 15" class="form-control" id="inputWorkShift">
+                        <input type="text" name="workShift" pattern="[4-8]{1}"
+                               placeholder="1 digit (4-8): 7" class="form-control" id="inputWorkShift">
                     </div>
 
                     <div class="form-group">
@@ -38,9 +38,11 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inputWorking">Working</label>
-                        <input type="text" name="working" pattern="[0-1]" placeholder="1 digit (0 or 1): 1"
-                               class="form-control" id="inputWorking">
+                        <label for="selectWorking">Working</label>
+                        <select name = "working" class="form-control" id="selectWorking">
+                            <option value ="true">true</option>
+                            <option value ="false">false</option>
+                        </select>
                     </div>
 
                     <div class="form-group">

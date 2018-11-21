@@ -10,7 +10,7 @@
 
 <main role="main" class="container">
 
-    <h1 class="mt-5">ERROR PAGE</h1>
+    <h1 class="mt-5">Warning notification</h1>
 
     <div class="form-group">
         <c:out value="${error}"/>

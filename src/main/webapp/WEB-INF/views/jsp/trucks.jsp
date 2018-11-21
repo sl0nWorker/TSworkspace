@@ -47,7 +47,7 @@
 
             <thead>
             <tr>
-                <th colspan="7" scope="col" bgcolor="#faebd7">
+                <th colspan="8" scope="col" bgcolor="#faebd7">
                     <!-- Button trigger modal -->
                     <div class="d-flex justify-content-end  ">
                         <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#addTruckModal">
@@ -64,6 +64,7 @@
                     <th scope="col">Work Shift</th>
                     <th scope="col">Load weight</th>
                     <th scope="col">City</th>
+                    <th scope="col">On order</th>
                     <th scope="col">Edit</th>
                 </tr>
             </c:if>
@@ -94,6 +95,15 @@
 
                     <td>
                         <c:out value="${truck.city}"/>
+                    </td>
+
+                    <td>
+                        <c:if test = "${truck.order == null}">
+                            false
+                        </c:if>
+                        <c:if test = "${truck.order != null}">
+                            true
+                        </c:if>
                     </td>
 
                     <td>

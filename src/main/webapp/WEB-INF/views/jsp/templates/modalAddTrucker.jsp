@@ -37,12 +37,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="inputWorkHours">Work hours</label>
-                        <input type="text" name="workHours" pattern="0|[1-9]|[1-9][0-9]|1[0-6][0-9]|17[0-6]"
-                               placeholder=" interval [0 - 176]: 55" required class="form-control" id="inputWorkHours">
-                    </div>
-
-                    <div class="form-group">
                         <label for="selectCity">City</label>
                         <select name="city" class="form-control" id="selectCity">
                             <c:forEach items="${citiesList}" var="city">

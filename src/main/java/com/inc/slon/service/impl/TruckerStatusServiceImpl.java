@@ -39,3 +39,4 @@ public class TruckerStatusServiceImpl implements TruckerStatusService {
     }
 
 }
+

@@ -18,9 +18,8 @@ public class ActiveOrderController {
     ArchiveOrderService archiveOrderService;
 
     @RequestMapping(value = {"/activeOrders"}, method = RequestMethod.GET)
-    public String showActiveOrdersPage(ModelMap map) {
+    public String showActiveOrdersPage() {
         log.info("(/activeOrders, get) start");
-
         log.info("(/activeOrders, get) end, return ACTIVE_ORDERS_PAGE");
         return ACTIVE_ORDERS_PAGE;
     }

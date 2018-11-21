@@ -20,7 +20,6 @@ public class FreightController {
     public String showActiveOrdersPage(ModelMap map) {
         final String path = "(/freightStatus, get) ";
         log.info(path + "start");
-
         map.addAttribute("freightList",freightService.freightList());
         log.info(path + "end");
         return FREIGHT_STATUS_PAGE;
