@@ -1,8 +1,11 @@
 package com.inc.slon.service.impl;
 
 import com.inc.slon.model.City;
+import com.inc.slon.model.Truck;
 import com.inc.slon.model.Trucker;
 import com.inc.slon.model.TruckerStatus;
+import com.inc.slon.model.form.TruckerEditForm;
+import com.inc.slon.model.form.TruckerForm;
 import com.inc.slon.service.CityService;
 import com.inc.slon.service.TruckerService;
 import com.inc.slon.service.TruckerServiceFacade;
@@ -38,28 +41,18 @@ public class TruckerServiceFacadeImpl implements TruckerServiceFacade {
 
     @Transactional
     @Override
-    public void addTrucker(String firstName, String lastName, int personalNumber, String cityId) {
-        Trucker truckerAdd = new Trucker();
-        log.info("try to set firstName");
-        truckerAdd.setFirstName(firstName);
-        truckerAdd.setLastName(lastName);
-        truckerAdd.setPersonalNumber(personalNumber);
-        truckerAdd.setWorkHours(0);
+    public void addTrucker(TruckerForm truckerForm) {
+        Trucker truckerAdd = new Trucker(truckerForm);
         TruckerStatus truckerStatus = truckerStatusService.findById("1");
         if (truckerStatus.getStatus().equals("FREE")) {
             truckerAdd.setStatus(truckerStatus);
         } else {
-            log.error("(/truckersAdd, post) TRUCKER_STATUS with id:1  must be FREE");
+            log.error("addTrucker, TRUCKER_STATUS with id:1  must be FREE");
+            throw new RuntimeException("addTrucker,TRUCKER_STATUS with id:1  must be FREE");
         }
-        if (cityId != null && !cityId.equals("")) {
-            City cityAdd = cityService.findById(cityId);
-            truckerAdd.setCity(cityAdd);
-        } else {
-            log.error("(/truckersAdd, post) RequestParam city is invalid");
-        }
-        log.info("Try add truck with city");
+        City cityAdd = cityService.findById(truckerForm.getCityId());
+        truckerAdd.setCity(cityAdd);
         truckerService.add(truckerAdd);
-        log.info("add truck with city was OK");
     }
 
     @Transactional
@@ -68,6 +61,12 @@ public class TruckerServiceFacadeImpl implements TruckerServiceFacade {
         log.info("I`m in /truckersDelete post");
         String[] ids = request.getParameterValues("id");
         if (ids != null && ids.length > 0) {
+            for (String id: ids){
+                Trucker trucker = truckerService.findById(Long.valueOf(id));
+                if (trucker.getTruck() != null){
+                    throw new RuntimeException("Can not delete the trucker on an order!");
+                }
+            }
             log.info("Try to remove by Id");
             log.info(Arrays.toString(ids));
             truckerService.removeAllById(ids);
@@ -79,53 +78,39 @@ public class TruckerServiceFacadeImpl implements TruckerServiceFacade {
 
     @Transactional
     @Override
-    public void editTrucker(String firstName, String lastName, Integer personalNumber, Integer workHours, String statusId, String cityId, Long truckerId) {
+    public void editTrucker(TruckerEditForm truckerEditForm) {
 
-        //TODO: checking if trucker is FREE, else ERROR MESSAGE: "you can`t edit this trucker"
-
-        log.info(truckerId + " : " + firstName + " : " + lastName + " : " + personalNumber + " : " + workHours + " : " + statusId + " :cityId " + cityId);
-
-        Trucker updateTrucker = truckerService.findById(truckerId);
-
-        if (firstName != null && !firstName.equals("")) {
-            updateTrucker.setFirstName(firstName);
-        } else {
-            log.info("(/truckerEdit, post) firstName = null or empty");
+        Trucker updateTrucker = truckerService.findById(Long.valueOf(truckerEditForm.getTruckerId()));
+        // checking if the trucker has not an order
+        if(updateTrucker.getTruck() != null) {
+            throw new RuntimeException("Can not edit the trucker on an order!");
         }
 
-        if (lastName != null && !lastName.equals("")) {
-            updateTrucker.setLastName(lastName);
-        } else {
-            log.info("(/truckerEdit, post) lastName = null or empty");
+        if (truckerEditForm.getFirstName() != null && !truckerEditForm.getFirstName().equals("")) {
+            updateTrucker.setFirstName(truckerEditForm.getFirstName());
         }
 
-        if (personalNumber != null) {
-            updateTrucker.setPersonalNumber(personalNumber);
-        } else {
-            log.info("(/truckerEdit, post) personalNumber = null");
+        if (truckerEditForm.getLastName()!= null && !truckerEditForm.equals("")) {
+            updateTrucker.setLastName(truckerEditForm.getLastName());
         }
 
-        if (workHours != null) {
-            updateTrucker.setWorkHours(workHours);
-        } else {
-            log.info("(/truckerEdit, post) workHours = null");
+        if (truckerEditForm.getPersonalNumber()!= null) {
+            updateTrucker.setPersonalNumber(Integer.valueOf(truckerEditForm.getPersonalNumber()));
         }
 
-        if (statusId != null && !statusId.equals("")) {
-            updateTrucker.setStatus(truckerStatusService.findById(statusId));
-        } else {
-            log.info("(/truckerEdit, post) statusId = null or empty");
+        if (truckerEditForm.getWorkHours()!= null) {
+            updateTrucker.setWorkHours(Integer.valueOf(truckerEditForm.getWorkHours()));
         }
 
-        if (cityId != null && !cityId.equals("")) {
+        String cityId = truckerEditForm.getCityId();
+        if (cityId != null) {
             log.info("changing cityName in updateTrucker to: " + cityService.findById(cityId).getCityName());
             updateTrucker.setCity(cityService.findById(cityId));
             log.info("updating city was ok");
-        } else {
-            log.info("(/truckersEdit, post) cityId = null or empty");
         }
 
-        log.info("(/truckersEdit, post) try to update Trucker");
+
         truckerService.update(updateTrucker);
+        log.info("editTrucker updating Trucker");
     }
 }

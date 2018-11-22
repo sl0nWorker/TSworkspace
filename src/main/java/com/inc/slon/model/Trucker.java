@@ -1,5 +1,7 @@
 package com.inc.slon.model;
 
+import com.inc.slon.model.form.TruckerForm;
+
 import javax.persistence.*;
 
 @Entity
@@ -33,6 +35,15 @@ public class Trucker {
     @OneToOne
     @JoinColumn(name = "TRUCK_ID")
     private Truck truck;
+
+    public Trucker(){}
+
+    public Trucker(TruckerForm truckerForm){
+        firstName = truckerForm.getFirstName();
+        lastName = truckerForm.getLastName();
+        personalNumber = Integer.valueOf(truckerForm.getPersonalNumber());
+        workHours = 0;
+    }
 
     public Long getId() {
         return id;

@@ -79,7 +79,7 @@
                         value="${trucker.truck.order.id}"/></li>
             </c:if>
             <%-- RouteList --%>
-            <c:if test="${routeList != null && routeList.size() != 0}">
+            <c:if test="${routeList != null && routeList.size() != 0 && trucker.truck != null}">
                 <li class="list-group-item list-group-item-light">Route list:</li>
                 <c:forEach items="${routeList}" var="route">
                     <form action="/truckerUi/trucker/changeFreightStatus" method="post">

@@ -1,4 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <!-- Modal for add new truck -->
 <div class="modal fade" id="addTruckModal" tabindex="-1" role="dialog" aria-labelledby="addTruckModalLabel"
      aria-hidden="true">
@@ -13,47 +15,47 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/trucksAdd" method="post">
+                <form:form action="/trucksAdd" method="post" modelAttribute="truckForm">
                     <div class="form-group">
                         <label for="inputRegNumber">Registration number</label>
-                        <input type="text" name="regNumber" pattern="[A-Za-z]{2}[0-9]{5}" placeholder="2 letters, 5 digits: Ab12345" required class="form-control" id="inputRegNumber">
+                        <form:input path="regNumber" placeholder="2 letters, 5 digits: Ab12345" pattern="[A-Za-z]{2}[0-9]{5}" required="required" class="form-control" id="inputRegNumber"/>
                     </div>
 
                     <div class="form-group">
                         <label for="inputWorkShift">Work shift</label>
-                        <input type="text" name="workShift" pattern="[4-8]{1}" placeholder="1 digit (4-8): 6" required  class="form-control" id="inputWorkShift">
+                        <form:input type="text" path="workShift" pattern="[4-8]{1}" placeholder="1 digit (4-8): 6" required="required"  class="form-control" id="inputWorkShift"/>
                     </div>
 
                     <div class="form-group">
                         <label for="inputLoadWeight">Load weight</label>
-                        <input type="text" name="loadWeight" pattern="1[5-9]|2[0-5]" placeholder="2 digits (15-25): 22" required  class="form-control" id="inputLoadWeight">
+                        <form:input type="text" path="loadWeight" pattern="1[5-9]|2[0-5]" placeholder="2 digits (15-25): 22" required="required"  class="form-control" id="inputLoadWeight"/>
                     </div>
 
                     <div class="form-group">
                         <label for="selectWorking">Working</label>
-                        <select name = "working" class="form-control" id="selectWorking">
-                            <option value ="true">true</option>
-                            <option value ="false">false</option>
-                        </select>
+                        <form:select path = "working" class="form-control" id="selectWorking">
+                            <form:option value ="true">true</form:option>
+                            <form:option value ="false">false</form:option>
+                        </form:select>
                     </div>
 
                     <div class="form-group">
                         <label for="selectCity">City</label>
-                        <select name="city" class="form-control" id="selectCity">
+                        <form:select path="cityId" class="form-control" id="selectCity">
                             <c:forEach items="${citiesList}" var="city">
                                 <!-- Send cityId to controller (/trucksAdd) for setting exsicting cityName (in Cities) -->
-                                <option value="${city.id}">
+                                <form:option value="${city.id}">
                                     <c:out value="${city.cityName}"/>
-                                </option>
+                                </form:option>
                             </c:forEach>
-                        </select>
+                        </form:select>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
-                </form>
+                </form:form>
             </div>
         </div>
     </div>

@@ -46,6 +46,8 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
     @Autowired
     RouteService routeService;
 
+    final static int loadUnloadHours = 2;
+
     @Transactional
     @Override
     public void putModelMapAndHttpSession(ModelMap map, HttpSession httpSession) {
@@ -231,8 +233,12 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
     @Override
     public void assignTruck(HttpSession httpSession, String truckId) {
         final String path = "(/createRouteList/saveRouteList/assignTruck, post)";
-        // TODO: add checks
+        //average time for loading/unloading a freight
         List<Route> savedRouteList = (List<Route>) httpSession.getAttribute("savedRouteList");
+        // TODO: add checks
+        if(savedRouteList == null || savedRouteList.size() == 0){
+            throw new RuntimeException("assignTruck, savedRouteList: null or size = 0");
+        }
         //assign the truck
         if (httpSession.getAttribute("assignedTruckId") == null) {
             if (truckId != null) {
@@ -247,15 +253,11 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
                     //TODO: Repair that. Session will be corrupted
                     log.info(path + " truckerList is empty, after assign truck");
                 } else {
-                    // check time limit = 176 hours
-                    // trucker is free
-                    // same city as the assignedTruck
                     for (Trucker trucker : truckerList) {
-                        //first check for not in another order
-                        if (trucker.getTruck() == null && trucker.getCity().getId() == assignedTruck.getCity().getId()
-                                && trucker.getStatus().getStatus().equals("FREE")
-                                && (176 - trucker.getWorkHours()) > countryMapService.timeForRouteList(savedRouteList)) {
+                        if (isTruckerChecks(trucker,assignedTruck,savedRouteList)) {
                             checkedTruckerList.add(trucker);
+                        } else{
+                            log.info(path + "(false) " + trucker);
                         }
                     }
                 }
@@ -295,15 +297,27 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
             // same city as the assignedTruck
             // DELETE trucker with truckerId in checkedTruckerList
             for (Trucker trucker : truckerList) {
-                if (trucker.getCity().getId() == assignedTruck.getCity().getId()
-                        && trucker.getStatus().getStatus().equals("FREE")
-                        && (176 - trucker.getWorkHours()) > countryMapService.timeForRouteList(savedRouteList)
-                        && trucker.getId() != truckerAdd.getId()) {
+                if (isTruckerChecks(trucker,assignedTruck, savedRouteList) && !trucker.getId().equals(truckerAdd.getId())) {
                     checkedTruckerList.add(trucker);
+                } else {
+                    log.info( "(/createRouteList/saveRouteList/assignTrucker, post) (false) " + trucker);
                 }
             }
             log.info("chekedTruckerList:" + checkedTruckerList + " size: " + checkedTruckerList.size());
             httpSession.setAttribute("checkedTruckerList", checkedTruckerList);
+        }
+    }
+
+    private boolean isTruckerChecks(Trucker trucker, Truck assignedTruck, List<Route> savedRouteList){
+        // check time limit = 176 hours
+        // trucker is free
+        // same city as the assignedTruck
+        //first check for not in another order
+        if (trucker.getTruck() == null && trucker.getCity().getId() == assignedTruck.getCity().getId() && trucker.getStatus().getStatus().equals("FREE")
+                && (176 - trucker.getWorkHours()) > countryMapService.timeForRouteList(savedRouteList) + loadUnloadHours){
+            return true;
+        } else {
+            return false;
         }
     }
 

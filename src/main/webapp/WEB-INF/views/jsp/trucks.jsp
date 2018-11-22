@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <head>
     <jsp:include page="templates/header.jsp"/>
     <!-- Show delete button, if one at least checkbox is pressed -->

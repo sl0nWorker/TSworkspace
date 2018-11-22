@@ -1,5 +1,7 @@
 package com.inc.slon.service;
 
+import com.inc.slon.model.form.TruckEditForm;
+import com.inc.slon.model.form.TruckForm;
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +11,7 @@ public interface TruckServiceFacade {
 
     void deleteTruck(HttpServletRequest request);
 
-    void addTruck(String regNumber, Integer workShift, Integer loadWeight, Boolean working, String cityId);
+    void addTruck(TruckForm truckForm);
 
-    void editTruck(String regNumber, Integer workShift, Integer loadWeight, Boolean working, String city, String idTruck);
+    void editTruck(TruckEditForm truckEditForm);
 }

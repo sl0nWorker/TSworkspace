@@ -129,12 +129,28 @@ public class TruckerUiServiceImpl implements TruckerUiService {
 
         Trucker updateTrucker = truckerService.findById(truckerId);
         TruckerStatus truckerStatus = truckerStatusService.findByName(changeStatus);
-        if (truckerStatus != null){
+        if (truckerStatus != null) {
             updateTrucker.setStatus(truckerStatus);
-        }else{
+        } else {
             log.error("(/truckerUi/trucker/changeStatus, post) truckerStatus == null");
         }
         truckerService.update(updateTrucker);
+    }
+
+    private boolean checkPreviousRoutesAreComplited(List<Route> routeList, Long routeId) {
+        if (routeList != null && routeList.size() != 0) {
+            for (Route route : routeList) {
+                if (!route.getComplete()) {
+                    if(route.getId().equals(routeId)){
+                       break;
+                    }
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            throw new RuntimeException("changeFreightStatus, but routeList in order null or size = 0");
+        }
     }
 
     @Transactional
@@ -143,10 +159,18 @@ public class TruckerUiServiceImpl implements TruckerUiService {
         final String path = "(/truckerUi/trucker/completeOrder, post) ";
         String error;
         log.info(path + "start");
+        // get the routeList for checking that all previous routes are completed
+        Trucker trucker = truckerService.findById(truckerId);
+        List<Route> routeList = trucker.getTruck().getOrder().getRouteList();
+        boolean isPreviousRoutesAreCompleted = checkPreviousRoutesAreComplited(routeList,routeId);
+        if (!isPreviousRoutesAreCompleted){
+            throw new RuntimeException("previous routes are not completed");
+        }
+
         Freight updateFreight = freightService.findById(freightId);
         Route updateRoute = routeService.findById(routeId);
-        if (!unloading){
-            if (updateFreight.getFreightStatus().getStatus().equals("Prepared")){
+        if (!unloading) {
+            if (updateFreight.getFreightStatus().getStatus().equals("Prepared")) {
                 updateFreight.setFreightStatus(freightStatusService.findByStatusName("Shipped"));
                 freightService.update(updateFreight);
                 updateRoute.setComplete(true);
@@ -157,13 +181,13 @@ public class TruckerUiServiceImpl implements TruckerUiService {
                 throw new RuntimeException(error);
 
             }
-        } else{
-            if (updateFreight.getFreightStatus().getStatus().equals("Shipped")){
+        } else {
+            if (updateFreight.getFreightStatus().getStatus().equals("Shipped")) {
                 updateFreight.setFreightStatus(freightStatusService.findByStatusName("Delivered"));
                 freightService.update(updateFreight);
                 updateRoute.setComplete(true);
                 routeService.update(updateRoute);
-            } else{
+            } else {
                 error = "unloading == true, but status != shipped";
                 log.error(path + "unloading == true, but status != shipped");
                 throw new RuntimeException(error);
@@ -176,7 +200,7 @@ public class TruckerUiServiceImpl implements TruckerUiService {
     public void completeTruckerOrder(Long truckerId, Long orderId, HttpSession httpSession) {
         Order order = orderService.findById(orderId);
         List<Trucker> truckerList = order.getTruckerList();
-        for (Trucker trucker: truckerList) {
+        for (Trucker trucker : truckerList) {
             trucker.setTruck(null);
             truckerService.update(trucker);
         }
@@ -186,7 +210,7 @@ public class TruckerUiServiceImpl implements TruckerUiService {
         //TODO:unchecked cast
         List<Order> orderList = (List<Order>) httpSession.getAttribute("orderList");
         for (int i = 0; i < orderList.size(); i++) {
-            if (orderList.get(i).getId().equals(orderId)){
+            if (orderList.get(i).getId().equals(orderId)) {
                 idx = i;
                 remove = true;
                 break;
@@ -201,6 +225,6 @@ public class TruckerUiServiceImpl implements TruckerUiService {
         orderService.removeById(orderId);
 
         log.info("(/truckerUi/trucker/completeOrder, post) remove in session orderlist " + remove);
-        httpSession.setAttribute("orderList",orderList);
+        httpSession.setAttribute("orderList", orderList);
     }
 }

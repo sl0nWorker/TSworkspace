@@ -1,5 +1,7 @@
 package com.inc.slon.service;
 
+import com.inc.slon.model.form.TruckerEditForm;
+import com.inc.slon.model.form.TruckerForm;
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,9 +10,9 @@ public interface TruckerServiceFacade {
 
     void putMap(ModelMap map);
 
-    void addTrucker(String firstName, String lastName, int personalNumber, String cityId);
+    void addTrucker(TruckerForm truckerForm);
 
     void deleteTruckers(HttpServletRequest request);
 
-    void editTrucker(String firstName, String lastName, Integer personalNumber, Integer workHours, String statusId, String cityId, Long truckerId);
+    void editTrucker(TruckerEditForm truckerEditForm);
 }

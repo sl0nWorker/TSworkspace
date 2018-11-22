@@ -1,16 +1,20 @@
 package com.inc.slon.controller;
 
+import com.inc.slon.model.form.TruckerEditForm;
+import com.inc.slon.model.form.TruckerForm;
 import com.inc.slon.service.TruckerServiceFacade;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 
 @Controller
@@ -23,6 +27,19 @@ public class TruckerController {
     @Autowired
     private Logger log;
 
+    // empty strings as null
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+
+    //add forms to the model
+    @ModelAttribute
+    public void bindModelAttributes(Model model){
+        model.addAttribute("truckerForm", new TruckerForm());
+        model.addAttribute("truckerEditForm", new TruckerEditForm());
+    }
+
     @RequestMapping(value = "/truckers", method = RequestMethod.GET)
     public String showTruckersPage(ModelMap map) {
         log.info("(/truckers, get) start");
@@ -32,13 +49,9 @@ public class TruckerController {
     }
 
     @RequestMapping(value = "/truckersAdd", method = RequestMethod.POST)
-    public ModelAndView addTrucker(@RequestParam("firstName") String firstName,
-                                 @RequestParam("lastName") String lastName,
-                                 @RequestParam("personalNumber") int personalNumber,
-                                 @RequestParam(value = "city") String cityId) {
+    public ModelAndView addTrucker(@Valid @ModelAttribute TruckerForm truckerForm){
         log.info("(/truckersAdd, post) start");
-        truckerServiceFacade.addTrucker(firstName,lastName,personalNumber,cityId);
-        log.info("name: " + firstName + ", lastName: " + lastName + ", personalNumber: " + personalNumber + ", workHours: " + 0);
+        truckerServiceFacade.addTrucker(truckerForm);
         log.info("(/truckersAdd, post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKERS_PAGE);
     }
@@ -52,15 +65,10 @@ public class TruckerController {
     }
 
     @RequestMapping(value = "/truckersEdit", method = RequestMethod.POST)
-    public ModelAndView editTrucker(@RequestParam(value = "firstName", required = false) String firstName,
-                                  @RequestParam(value = "lastName", required = false) String lastName,
-                                  @RequestParam(value = "personalNumber", required = false) Integer personalNumber,
-                                  @RequestParam(value = "workHours", required = false) Integer workHours,
-                                  @RequestParam(value = "statusId", required = false) String statusId,
-                                  @RequestParam(value = "city", required = false) String cityId,
-                                  @RequestParam(value = "truckerId") Long truckerId) {
+    public ModelAndView editTrucker(@Valid @ModelAttribute TruckerEditForm truckerEditForm) {
         log.info("(/truckersEdit, post) start");
-        truckerServiceFacade.editTrucker(firstName,lastName,personalNumber,workHours,statusId,cityId,truckerId);
+        truckerServiceFacade.editTrucker(truckerEditForm);
+        //TODO: change in citiesList to default null value with "Choose city"
         log.info("(/truckersEdit, post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKERS_PAGE);
     }

@@ -1,16 +1,21 @@
 package com.inc.slon.controller;
 
+import com.inc.slon.model.Truck;
+import com.inc.slon.model.form.TruckEditForm;
+import com.inc.slon.model.form.TruckForm;
 import com.inc.slon.service.TruckServiceFacade;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 
 @Controller
@@ -20,6 +25,18 @@ public class TruckController {
     private TruckServiceFacade truckServiceFacade;
     @Autowired
     private Logger log;
+
+    // empty strings as null
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+    //add forms to the model
+    @ModelAttribute
+    public void bindModelAttributes(Model model){
+        model.addAttribute("truckForm", new TruckForm());
+        model.addAttribute("truckEditForm", new TruckEditForm());
+    }
 
     @RequestMapping(value = "/trucks", method = RequestMethod.GET)
     public String showTrucksPage(ModelMap map) {
@@ -38,26 +55,17 @@ public class TruckController {
     }
 
     @RequestMapping(value = "/trucksAdd", method = RequestMethod.POST)
-    public ModelAndView addTruck(@RequestParam("regNumber") String regNumber,
-                                 @RequestParam("workShift") Integer workShift,
-                                 @RequestParam("loadWeight") Integer loadWeight,
-                                 @RequestParam("working") Boolean working,
-                                 @RequestParam("city") String cityId) {
+    public ModelAndView addTruck(@Valid @ModelAttribute TruckForm truckForm) {
         log.info("(/trucksAdd,post) start");
-        truckServiceFacade.addTruck(regNumber,workShift,loadWeight,working,cityId);
+        truckServiceFacade.addTruck(truckForm);
         log.info("(/trucksAdd,post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }
 
     @RequestMapping(value = "/trucksEdit", method = RequestMethod.POST)
-    public ModelAndView editTruck(@RequestParam(value = "regNumber", required = false) String regNumber,
-                                  @RequestParam(value = "workShift", required = false) Integer workShift,
-                                  @RequestParam(value = "loadWeight", required = false) Integer loadWeight,
-                                  @RequestParam(value = "working", required = false) Boolean working,
-                                  @RequestParam(value = "city", required = false) String city,
-                                  @RequestParam(value = "idTruck", required = false) String idTruck) {
+    public ModelAndView editTruck(@Valid @ModelAttribute TruckEditForm truckEditForm) {
         log.info("(/trucksEdit,post) start");
-        truckServiceFacade.editTruck(regNumber,workShift,loadWeight,working,city,idTruck);
+        truckServiceFacade.editTruck(truckEditForm);
         log.info("(/trucksEdit,post) end, return ModelAndView");
         return new ModelAndView("redirect:" + TRUCKS_PAGE);
     }

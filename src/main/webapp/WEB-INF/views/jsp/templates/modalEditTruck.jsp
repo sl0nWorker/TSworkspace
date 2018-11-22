@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!-- Modal for edit truck -->
 <div class="modal fade" id="editTruckModal" tabindex="-1" role="dialog" aria-labelledby="editTruckModalLabel"
      aria-hidden="true">
@@ -13,55 +14,57 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/trucksEdit" method="post">
+                <form:form action="/trucksEdit" method="post" modelAttribute="truckEditForm">
 
                     <div class="form-group" style="display: none;">
-                        <input type="text" name="idTruck" id="inputIdTruck">
+                        <form:input type="text" path="idTruck" id="inputIdTruck"/>
                     </div>
 
                     <div class="form-group">
                         <label for="inputRegNumber">Registration number</label>
-                        <input type="text" name="regNumber" pattern="[A-Za-z]{2}[0-9]{5}"
-                               placeholder="2 letters, 5 digits: Ab12345" class="form-control" id="inputRegNumber">
+                        <form:input type="text" path="regNumber" pattern="[A-Za-z]{2}[0-9]{5}"
+                               placeholder="2 letters, 5 digits: Ab12345" class="form-control" id="inputRegNumber"/>
                     </div>
 
                     <div class="form-group">
                         <label for="inputWorkShift">Work shift</label>
-                        <input type="text" name="workShift" pattern="[4-8]{1}"
-                               placeholder="1 digit (4-8): 7" class="form-control" id="inputWorkShift">
+                        <form:input type="text" path="workShift" pattern="[4-8]{1}"
+                               placeholder="1 digit (4-8): 7" class="form-control" id="inputWorkShift"/>
                     </div>
 
                     <div class="form-group">
                         <label for="inputLoadWeight">Load weight</label>
-                        <input type="text" name="loadWeight" pattern="1[5-9]|2[0-5]" placeholder="2 digits (15-25): 22"
-                               class="form-control" id="inputLoadWeight">
+                        <form:input type="text" path="loadWeight" pattern="1[5-9]|2[0-5]" placeholder="2 digits (15-25): 22"
+                               class="form-control" id="inputLoadWeight"/>
                     </div>
 
                     <div class="form-group">
                         <label for="selectWorking">Working</label>
-                        <select name = "working" class="form-control" id="selectWorking">
-                            <option value ="true">true</option>
-                            <option value ="false">false</option>
-                        </select>
+                        <form:select path= "working" class="form-control" id="selectWorking">
+                            <form:option value="" selected="selected">Choose the condition</form:option>
+                            <form:option value ="true">true</form:option>
+                            <form:option value ="false">false</form:option>
+                        </form:select>
                     </div>
 
                     <div class="form-group">
                         <label for="selectCity">City</label>
-                        <select name="city" class="form-control" id="selectCity">
+                        <form:select path="cityId" class="form-control" id="selectCity">
+                            <form:option value="" selected="selected">Choose city</form:option>
                             <c:forEach items="${citiesList}" var="city">
                                 <!-- Send cityId to controller (/trucksEdit) for changing cityName in Truck  -->
-                                <option value="${city.id}">
+                                <form:option value="${city.id}">
                                     <c:out value="${city.cityName}"/>
-                                </option>
+                                </form:option>
                             </c:forEach>
-                        </select>
+                        </form:select>
                     </div>
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save changes</button>
                     </div>
-                </form>
+                </form:form>
             </div>
         </div>
     </div>

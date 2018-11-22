@@ -1,6 +1,10 @@
 package com.inc.slon.model;
 
+import com.inc.slon.model.form.TruckForm;
+
 import javax.persistence.*;
+
+
 
 @Entity
 @Table(name = "TRUCKS")
@@ -38,6 +42,14 @@ public class Truck {
         this.workShift = workShift;
         this.loadWeight = loadWeight;
         this.working = working;
+        this.city = city;
+    }
+
+    public Truck(TruckForm truckForm, City city){
+        regNumber = truckForm.getRegNumber();
+        workShift = Integer.valueOf(truckForm.getWorkShift());
+        loadWeight = Integer.valueOf(truckForm.getLoadWeight());
+        working = truckForm.getWorking();
         this.city = city;
     }
     public Long getId() {

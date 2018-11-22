@@ -68,8 +68,14 @@
         </tbody>
     </table>
 
+    <%--alert, if list of truck is empty --%>
+    <c:if test="${empty sessionScope.freeTruckList}">
+        <div class="alert alert-danger" role="alert">
+            No matching trucks
+        </div>
+    </c:if>
 
-    <c:if test="${empty sessionScope.assignedTruckId}">
+    <c:if test="${empty sessionScope.assignedTruckId && not empty sessionScope.freeTruckList}">
         <form action="/createRouteList/saveRouteList/assignTruck" method="post">
                 <%--TODO: add parametr for check selected truck, and show Truckers if true, or selectTruckList if false --%>
             <div class="form-group">
@@ -89,6 +95,13 @@
                 </button>
             </div>
         </form>
+    </c:if>
+
+    <%--alert, if list of trucker is empty --%>
+    <c:if test="${not empty sessionScope.assignedTruck && empty sessionScope.checkedTruckerList}">
+        <div class="alert alert-danger" role="alert">
+            No matching truckers
+        </div>
     </c:if>
 
     <c:if test="${(not empty sessionScope.checkedTruckerList) and (sessionScope.savedTruckerList.size() < 2)}">
