@@ -1,6 +1,7 @@
 package com.inc.slon.service.impl;
 
 import com.inc.slon.model.*;
+import com.inc.slon.model.form.RouteForm;
 import com.inc.slon.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +66,52 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
         }
     }
 
+    private boolean isLoadingBeforeUnloadingAndUniqueFreightNumber(RouteForm routeForm, List<Route> routeList) {
+        Integer checkingFreightNumber = Integer.valueOf(routeForm.getFreightNumber());
+
+        if (routeForm.getLoading().equals("Loading")){
+            for (Route route: routeList) {
+                if(route.getFreight().getFreightNumber().equals(checkingFreightNumber)){
+                   throw new RuntimeException("Freight with freightNumber: " + routeForm.getFreightNumber() + " must has only a one loading route point");
+                }
+            }
+            // freight with the same number not found, can add loading
+            return true;
+        } else{
+            boolean hasloadingWithSameFreighNumber = false;
+            for (Route route: routeList){
+                if (route.getFreight().getFreightNumber().equals(checkingFreightNumber)){
+                    if(route.getUnloading()) {
+                        throw new RuntimeException("Freight with freightNumber: " + routeForm.getFreightNumber() + " must has only a one unloading route point");
+                    }
+                    //check if the name and weight filds are equals for the same freightNumber
+                    if (!route.getFreight().getName().equals(routeForm.getFreightName()) || !route.getFreight().getWeight().equals(Integer.valueOf(routeForm.getWeight()))){
+                        log.info("here:!!!!!!!!!!!!!!  "+!route.getFreight().getName().equals(routeForm.getFreightName()) +" " + !route.getFreight().getWeight().equals(routeForm.getWeight()));
+                        throw new RuntimeException("fields freight name and freight weight must be same in route points with equals freightNumber");
+                    }
+                    hasloadingWithSameFreighNumber = true;
+                }
+            }
+            if(hasloadingWithSameFreighNumber) {
+                return true;
+            }
+            // freight with the same number not found, can`t add unloading
+            return false;
+        }
+    }
+
     @Transactional
     @Override
-    public void addRoute(ModelMap map, HttpSession httpSession, String cityId, Integer freightNumber, String freightName, Integer freightWeight, String loading) {
+    public void addRoute(ModelMap map, HttpSession httpSession, RouteForm routeForm) {
         //TODO: add checking that loading is ahead of unloading. If unloading , check existing way from A to B
         // TODO: add type checks
+
         List<Route> routeList = (List<Route>) httpSession.getAttribute("routeList");
+        //check loading before unloading and unique freight number
+        if (!isLoadingBeforeUnloadingAndUniqueFreightNumber(routeForm,routeList)){
+            throw new RuntimeException("freight with the same number not found, can`t add unloading");
+        }
+
         log.info("/createRouteList,post getOrder");
 
         if (routeList != null && routeList.size() != 0) {
@@ -80,19 +121,19 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
         Route route = new Route();
         //TODO: add checking cityService.findById
         log.info("Find cityID");
-        route.setCity(cityService.findById(cityId));
+        route.setCity(cityService.findById(routeForm.getCityId()));
         //TODO: persist route after freight
         Freight freight = new Freight();
-        freight.setFreightNumber(freightNumber);
-        freight.setName(freightName);
-        freight.setWeight(freightWeight);
+        freight.setFreightNumber(Integer.valueOf(routeForm.getFreightNumber()));
+        freight.setName(routeForm.getFreightName());
+        freight.setWeight(Integer.valueOf(routeForm.getWeight()));
         log.info("Find freightStatus");
         log.info("List status: " + freightStatusService.statusList());
         log.info("FINDBYSTATUSNAME: " + freightStatusService.findByStatusName("Prepared"));
         freight.setFreightStatus(freightStatusService.findByStatusName("Prepared"));
         route.setFreight(freight);
 
-        if (loading.equals("Loading")) {
+        if (routeForm.getLoading().equals("Loading")) {
             route.setUnloading(false);
         } else {
             route.setUnloading(true);
@@ -138,51 +179,27 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
         httpSession.setAttribute("checkedTruckerList", null);
         httpSession.setAttribute("savedTruckerList", null);
 
-        //checks for frieght and path
-
-
+        //checks for frieght
         Integer freightNumber;
         Integer comparedFreightNumber;
-        int countCheckPairNumbers;
+        int countPairNumbers = 0;
         String error;
-
         for (int i = 0; i < savedRouteList.size(); i++) {
             freightNumber = savedRouteList.get(i).getFreight().getFreightNumber();
-            countCheckPairNumbers = 1;
             for (int j = 0; j < savedRouteList.size(); j++) {
                 //check for existing only two equals freightNumbers (load/unload)
                 comparedFreightNumber = savedRouteList.get(j).getFreight().getFreightNumber();
                 if (comparedFreightNumber == freightNumber && i != j) {
-                    if (!savedRouteList.get(i).getFreight().getName().equals(savedRouteList.get(j).getFreight().getName()) ||
-                            savedRouteList.get(i).getFreight().getWeight() != savedRouteList.get(j).getFreight().getWeight()) {
-                        error = "name or weight not the same in freight with number: " + freightNumber;
-                        throw new RuntimeException(error);
-                    }
-                    countCheckPairNumbers++;
-                    boolean iRouteStatus = savedRouteList.get(i).getUnloading();
-                    boolean jRouteStatus = savedRouteList.get(j).getUnloading();
-                    if (i < j) {
-                        if (iRouteStatus != false || jRouteStatus != true) {
-                            log.error("(/createRouteList/saveRouteList, post) not existing pair loading before unloading");
-                            error = "not in all pairs loading before unloading";
-                            throw new RuntimeException(error);
-                        }
-                    } else {
-                        if (iRouteStatus != true || jRouteStatus != false) {
-                            log.error("(/createRouteList/saveRouteList, post) not existing pair loading before unloading");
-                            error = "not in all pairs loading before unloading";
-                            throw new RuntimeException(error);
-                        }
-                    }
+                    countPairNumbers++;
                 }
             }
-            if (countCheckPairNumbers != 2) {
+            if (countPairNumbers != 1) {
                 log.error("(/createRouteList/saveRouteList , post) freightPairNumber <2 or >2");
-                error = "not all pairs complited";
+                error = "not all pairs completed";
                 throw new RuntimeException(error);
             }
+            countPairNumbers = 0;
         }
-
         //end checking for freight
 
         httpSession.setAttribute("savedRouteList", savedRouteList);
@@ -218,7 +235,7 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
         }
         // check truck loadWeight > maxWeight
         for (Truck truck : truckList) {
-            if (truck.getOrder() == null && truck.getWorking() && truck.getLoadWeight() >= maxWeight) {
+            if (truck.getOrder() == null && truck.getWorking() && truck.getLoadWeight() * 1000 >= maxWeight) {
                 freeTruckList.add(truck);
                 log.info(path + "(true) truck loadWeight: " + truck.getLoadWeight() + " maxWeight: " + maxWeight);
             } else {
@@ -335,6 +352,16 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
         List<Trucker> truckerList = (List<Trucker>) httpSession.getAttribute("savedTruckerList");
         order.setTruckerList(truckerList);
 
+        // TODO: clean httpSession
+        httpSession.setAttribute("routeList", null);
+        httpSession.setAttribute("savedRouteList", null);
+        httpSession.setAttribute("savedTruckerList", null);
+        httpSession.setAttribute("assignedTruck", null);
+        httpSession.setAttribute("assignedTruckId", null);
+        httpSession.setAttribute("checkedTruckerList", null);
+
+
+
         // assign truck to truckers and change truckers status (NOT FREE)
         for (Trucker trucker:truckerList) {
             trucker.setTruck(truck);
@@ -364,13 +391,7 @@ public class RouteServiceFacadeImpl implements RouteServiceFacade {
         orderService.add(order);
         log.info("AFTER ADDING ORDER");
 
-        // TODO: clean httpSession
-        httpSession.setAttribute("routeList", null);
-        httpSession.setAttribute("savedRouteList", null);
-        httpSession.setAttribute("savedTruckerList", null);
-        httpSession.setAttribute("assignedTruck", null);
-        httpSession.setAttribute("assignedTruckId", null);
-        httpSession.setAttribute("checkedTruckerList", null);
+
 
         List<Order> orderList = (List<Order>) httpSession.getAttribute("orderList");
         if (orderList == null) {

@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class TruckServiceFacadeImpl implements TruckServiceFacade {

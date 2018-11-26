@@ -18,7 +18,7 @@ public class Trucker {
     @Column(name = "LASTNAME")
     private String lastName;
 
-    @Column(name = "PERSONAL_NUMBER")
+    @Column(name = "PERSONAL_NUMBER", unique = true)
     private Integer personalNumber;
 
     @Column(name = "WORK_HOURS")

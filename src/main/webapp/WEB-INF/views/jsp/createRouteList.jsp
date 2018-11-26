@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <head>
     <jsp:include page="templates/header.jsp"/>
     <!-- Show delete button, if one at least checkbox is pressed -->
@@ -63,7 +64,13 @@
                     </td>
 
                     <td>
-                        <c:out value="${route.unloading}"/>
+                        <c:if test="${route.unloading == true}">
+                            Unloading
+                        </c:if>
+                        <c:if test="${route.unloading == false}">
+                            Loading
+                        </c:if>
+
                     </td>
 
                 </tr>
@@ -75,7 +82,7 @@
         </button>
     </form>
 
-    <form action="/createRouteList" method="post">
+    <form:form action="/createRouteList" method="post" modelAttribute="routeForm">
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -89,14 +96,14 @@
                 <td>
                     <div class="form-group">
                         <label for="selectCity">City</label>
-                        <select name="city" class="form-control" id="selectCity">
+                        <form:select path="cityId" class="form-control" id="selectCity">
                             <c:forEach items="${citiesList}" var="city">
                                 <!-- Send cityId to controller (/createRouteList) -->
-                                <option value="${city.id}">
+                                <form:option value="${city.id}">
                                     <c:out value="${city.cityName}"/>
-                                </option>
+                                </form:option>
                             </c:forEach>
-                        </select>
+                        </form:select>
                     </div>
                 </td>
                 <td>
@@ -104,24 +111,24 @@
                     <div class="form-group">
                         <label for="inputFreightNumber">Freight number</label>
                         <%-- TODO: add regexp for number --%>
-                        <input type="text" name="freightNumber" required pattern="[0-9]{1,9}"
+                        <form:input type="text" path="freightNumber" required="required" pattern="[0-9]{1,9}"
                                placeholder="max length 9 (only digits): 9102" class="form-control"
-                               id="inputFreightNumber">
+                               id="inputFreightNumber"/>
                     </div>
                     <%-- TODO: use selected list, create list of freight names--%>
                     <div class="form-group">
                         <label for="inputFreightName">Freight name</label>
-                        <input type="text" name="freightName" required pattern="[A-Za-z]{1,25}"
+                        <form:input type="text" path="freightName" required="required" pattern="[A-Za-z]{1,25}"
                                placeholder="max length 25 (only eng letters): Apple" class="form-control"
-                               id="inputFreightName">
+                               id="inputFreightName"/>
                     </div>
 
                     <div class="form-group">
                         <label for="inputFreightWeight">Weight</label>
                         <%-- TODO: remove wrong regexp --%>
-                        <input type="text" name="freightWeight" required pattern="[0-9]|[1-9]{1}[0-9]{1,4}"
+                        <form:input type="text" path="weight" required="required" pattern="[0-9]|[1-9]{1}[0-9]{1,4}"
                                placeholder="max 5 digits: 25000"
-                               class="form-control" id="inputFreightWeight">
+                               class="form-control" id="inputFreightWeight"/>
                     </div>
                     <%-- Freight status always is prepared at creation stage --%>
                 </td>
@@ -130,10 +137,10 @@
                 <td>
                     <div class="form-group">
                         <label for="selectLoading">Loading</label>
-                        <select name="loading" class="form-control" id="selectLoading">
+                        <form:select path="loading" class="form-control" id="selectLoading">
                             <option>Loading</option>
                             <option>Unloading</option>
-                        </select>
+                        </form:select>
                     </div>
                     <div class="form-group">
                         <button type="submit" class="btn btn-dark">
@@ -145,7 +152,7 @@
             </tr>
             </tbody>
         </table>
-    </form>
+    </form:form>
 
     <form action="/createRouteList/saveRouteList" method="post" id="formAddRouteList">
         <c:if test="${routeList != null && routeList.size() != 0}">

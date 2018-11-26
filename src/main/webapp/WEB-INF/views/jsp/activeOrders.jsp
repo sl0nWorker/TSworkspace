@@ -46,9 +46,7 @@
                 </td>
 
                 <td>
-                    <c:forEach items="${order.routeList}" var="route">
-                        <c:out value="${route.city}"/>
-                    </c:forEach>
+                        <c:out value="${order.showRouteList()}"/>
                 </td>
 
                 <td>
@@ -56,9 +54,7 @@
                 </td>
 
                 <td>
-                    <c:forEach items="${order.truckerList}" var="trucker">
-                        <c:out value="${trucker.lastName}"/>
-                    </c:forEach>
+                    <c:out value="${order.showTruckerList()}"/>
                 </td>
             </tr>
         </c:forEach>

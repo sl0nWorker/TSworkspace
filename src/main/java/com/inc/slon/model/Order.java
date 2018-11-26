@@ -29,8 +29,8 @@ public class Order {
 
     //magic
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "ORDER_TRUCKERS", joinColumns = @JoinColumn (name = "ORDER_ID"),
-    inverseJoinColumns = @JoinColumn (name = "TRUCKER_ID"))
+    @JoinTable(name = "ORDER_TRUCKERS", joinColumns = @JoinColumn(name = "ORDER_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TRUCKER_ID"))
     private List<Trucker> truckerList;
 
     public Long getId() {
@@ -67,5 +67,33 @@ public class Order {
 
     public void setTruckerList(List<Trucker> truckerList) {
         this.truckerList = truckerList;
+    }
+
+    public String showTruckerList() {
+        if (truckerList != null && truckerList.size() != 0) {
+            StringBuilder sb = new StringBuilder();
+            int i;
+            for (i = 0; i < truckerList.size() - 1; i++) {
+                sb.append(truckerList.get(i).getLastName() + " " + truckerList.get(i).getFirstName() + ", ");
+            }
+            sb.append(truckerList.get(i).getLastName() + " " + truckerList.get(i).getFirstName() + ".");
+            return sb.toString();
+        } else {
+            return "empty trucker list";
+        }
+    }
+
+    public String showRouteList() {
+        if (routeList != null && routeList.size() != 0) {
+            StringBuilder sb = new StringBuilder();
+            int i;
+            for (i = 0; i < routeList.size() - 1; i++) {
+                sb.append(routeList.get(i).getCity() + "-");
+            }
+            sb.append(routeList.get(i).getCity() + ".");
+            return sb.toString();
+        } else {
+            return "empty route list";
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.inc.slon.service;
 
+import com.inc.slon.model.form.RouteForm;
 import org.springframework.ui.ModelMap;
 
 import javax.servlet.http.HttpSession;
@@ -7,7 +8,7 @@ import javax.servlet.http.HttpSession;
 public interface RouteServiceFacade {
     void putModelMapAndHttpSession(ModelMap map, HttpSession httpSession);
 
-    void addRoute(ModelMap map, HttpSession httpSession, String cityId, Integer freightNumber, String freightName, Integer freightWeight, String loading);
+    void addRoute(ModelMap map, HttpSession httpSession, RouteForm routeForm);
 
     void deleteRoutes(ModelMap map, HttpSession httpSession, Integer[] ids);
 

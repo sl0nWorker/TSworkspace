@@ -14,7 +14,7 @@ public class Truck {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column(name = "REGNUMBER")
+    @Column(name = "REGNUMBER",unique = true)
     private String regNumber;
 
     @Column(name = "WORK_SHIFT")

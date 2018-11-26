@@ -1,17 +1,22 @@
 package com.inc.slon.controller;
 
 
+import com.inc.slon.model.form.RouteForm;
+import com.inc.slon.model.form.TruckerEditForm;
+import com.inc.slon.model.form.TruckerForm;
 import com.inc.slon.service.*;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 
 @Controller
@@ -24,6 +29,19 @@ public class CreateRouteListController {
     @Autowired
     RouteServiceFacade routeServiceFacade;
 
+    // empty strings as null
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+
+    //add forms to the model
+    @ModelAttribute
+    public void bindModelAttributes(Model model){
+        model.addAttribute("routeForm", new RouteForm());
+    }
+
+
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.GET)
     public String showCreateOrderPage(ModelMap map, HttpSession httpSession) {
         log.info("/createRouteList, get) start");
@@ -33,14 +51,9 @@ public class CreateRouteListController {
     }
 
     @RequestMapping(value = {"/createRouteList"}, method = RequestMethod.POST)
-    public ModelAndView addRouteInOrder(ModelMap map, HttpSession httpSession,
-                                        @RequestParam(value = "city") String cityId,
-                                        @RequestParam(value = "freightNumber") Integer freightNumber,
-                                        @RequestParam(value = "freightName") String freightName,
-                                        @RequestParam(value = "freightWeight") Integer freightWeight,
-                                        @RequestParam(value = "loading") String loading) {
+    public ModelAndView addRouteInOrder(ModelMap map, HttpSession httpSession, @Valid @ModelAttribute RouteForm routeForm) {
         log.info("/createRouteList, post) start");
-        routeServiceFacade.addRoute(map,httpSession,cityId,freightNumber,freightName,freightWeight,loading);
+        routeServiceFacade.addRoute(map,httpSession,routeForm);
         log.info("/createRouteList, post) end, return CREATE_ROUTE_PAGE");
         return new ModelAndView("redirect:" + CREATE_ROUTE_PAGE);
     }

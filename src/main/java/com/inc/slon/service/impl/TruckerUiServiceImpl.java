@@ -202,6 +202,7 @@ public class TruckerUiServiceImpl implements TruckerUiService {
         List<Trucker> truckerList = order.getTruckerList();
         for (Trucker trucker : truckerList) {
             trucker.setTruck(null);
+            trucker.setStatus(truckerStatusService.findByName("FREE"));
             truckerService.update(trucker);
         }
         //remove in session orderList

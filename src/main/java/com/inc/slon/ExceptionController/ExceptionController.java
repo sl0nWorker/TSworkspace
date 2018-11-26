@@ -15,10 +15,25 @@ public class ExceptionController {
     Logger log;
 
     @ExceptionHandler(value = Exception.class)
-    public ModelAndView handleException(HttpServletRequest request, Exception ex){
-        log.error("Request: " + request.getRequestURL() + " Threw an Exception: " + ex.getMessage(),ex);
+    public ModelAndView handleException(HttpServletRequest request, Exception ex) {
+        log.error("Request: " + request.getRequestURL() + " Threw an Exception: " + ex.getMessage(), ex);
+        String error = ex.getMessage();
         ModelAndView modelAndView = new ModelAndView("errorGeneral");
-        modelAndView.addObject("error",ex.getMessage());
+        //checks
+        StringBuilder sb = new StringBuilder();
+        StackTraceElement[] stackTraceElements = ex.getStackTrace();
+        for (int i = 0; i < stackTraceElements.length; i++) {
+            sb.append(stackTraceElements[i].getMethodName() + " ");
+        }
+        String methods = sb.toString();
+        if (methods.contains("addTrucker") || methods.contains("editTrucker")) {
+            error = "the personal number of the trucker must be unique";
+            log.info("methodsStackTrace (Add/Edit) trucker: " + methods);
+        } else if (methods.contains("addTruck") || methods.contains("editTruck")) {
+            error = "the registration number of the truck must be unique";
+            log.info("methodsStackTrace(Add/Edit) truck: " + methods);
+        }
+        modelAndView.addObject("error", error);
         return modelAndView;
     }
 }

@@ -10,7 +10,7 @@ public class Freight {
     @Column(name = "ID", nullable = false)
     private Long id;
 
-    @Column
+    @Column (name = "FREIGHT_NUMBER",unique = true)
     private Integer freightNumber;
 
     @Column(name = "NAME")
